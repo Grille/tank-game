@@ -1,10 +1,10 @@
 # Tank Game
 TopDown Tank-game in javascript
 
-##Gameplay
+## Gameplay
 Drive a tank over a map and shoot at other players.
 
-##ToDo
+## ToDo
 - [ ] basic engine
 - [ ] graphics
 - [ ] renderer (top-down, webGL2D)
@@ -13,6 +13,6 @@ Drive a tank over a map and shoot at other players.
 - [ ] damage system
 - [ ] network/local multiplayer
 
-##Possible additions
+## Possible additions
 - [ ] KI
 - [ ] map generator
