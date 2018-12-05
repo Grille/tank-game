@@ -16,3 +16,4 @@ Drive a tank over a map and shoot at other players.
 ## Possible additions
 - [ ] KI
 - [ ] map generator
+- [ ] map editor
