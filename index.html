@@ -7,8 +7,9 @@
 
     <script type="text/javascript" src="lib/webgl2D.js"></script>
 
-    <script type="text/javascript" src="src/client/renderer.js"></script>
     <script type="text/javascript" src="src/client/client.js"></script>
+    <script type="text/javascript" src="src/client/renderer.js"></script>
+    <script type="text/javascript" src="src/client/logic.js"></script>
     <script type="text/javascript" src="src/client/localSocket.js"></script>
 
     <script type="text/javascript" src="src/server/localServer.js"></script>
@@ -24,6 +25,13 @@
 
 <body unselectable="on" onload="main()" oncontextmenu="return false";>
     <canvas id="canvas"></canvas>
+    <div id="menu">
+        <button id="html_btnSNG">Start Network Game</button><br>
+        <button id="html_btnSLG">Start Local Game</button><br>
+        <button id="html_btnJNG">Join Network Game</button><br>
+    </div>
 </body>
 
 </html>
+
+

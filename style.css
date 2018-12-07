@@ -4,3 +4,12 @@ canvas{
   position: fixed; 
   background-color: black;
 }
+#menu{
+  position: fixed;
+  background-color: brown;
+}
+#menu button{
+  width: 150pt;
+  background-color: maroon;
+  color: gold;
+}
