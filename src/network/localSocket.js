@@ -1,4 +1,4 @@
-class LocalSocket{
+class Socket{
   constructor(localServer){
     this.localServer = localServer;
     this.localServer.localSocket = this;
@@ -6,6 +6,6 @@ class LocalSocket{
   }
 }
 
-LocalSocket.prototype.send = function(m){
+Socket.prototype.send = function(m){
   setTimeout(()=>{this.localServer.onmessage({data:m})}, 4);
 }

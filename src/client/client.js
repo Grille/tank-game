@@ -20,8 +20,8 @@ Client.prototype.setRenderTraget = function(canvas){
 }
 Client.prototype.connect = function(goal){
   if (goal == "local"){
-    this.socket = new LocalSocket(localServer);
-    this.socket.send('0,'+"Grille");
+    this.socket = new Socket(localServer);
+    //this.socket.send('0,'+"Grille");
   }
 }
 Client.prototype.start = function(){
@@ -30,10 +30,12 @@ Client.prototype.start = function(){
   this.render();
 }
 Client.prototype.addEvents = function(){
+  let _this = this;
   window.addEventListener("keydown",(e)=>{
-    keyDown[e.keyCode] = true;
+    console.log(e.keyCode);
+    _this.keyDown[e.keyCode] = true;
   });
   window.addEventListener("keyup",(e)=>{
-    keyDown[e.keyCode] = false;
+    _this.keyDown[e.keyCode] = false;
   });
 }
