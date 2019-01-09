@@ -30,9 +30,9 @@ function loadData(){
 }
 
 function startLocalGame(){
-  startServer("local");
+  //startServer("local");
   let client = new Client();
-  client.connect("local");
+  client.connect('ws://localhost:51942/');
   client.setRenderTraget(canvas);
   client.start();
 }

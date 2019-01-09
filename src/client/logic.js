@@ -13,11 +13,13 @@ Client.prototype.logic = function(){
   if (this.keyDown[37]){
     tankRot-=0.5;
     speed -= 0.005;
+    speed *= 0.99;
     thrust = true;
   }
   if (this.keyDown[39]){
     tankRot+=0.5;
     speed -= 0.005;
+    speed *= 0.99;
     thrust = true;
   }
   if (thrust)speed += 0.01;
