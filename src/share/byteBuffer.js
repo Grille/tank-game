@@ -3,11 +3,11 @@ class ByteBuffer{
         this.index = 0;
         this.data = [];
         if (data != void 0)
-        this.data = data;
+        this.data = new Uint8Array(data);
     }
 }
 ByteBuffer.prototype.setBuffer = function(value){
-    this.data = value;
+    this.data = new Uint8Array(value);
     this.index = 0;
 }
 ByteBuffer.prototype.getBuffer = function(){
@@ -26,13 +26,13 @@ ByteBuffer.prototype.writeInt32 = function(value){
     this.data[this.index+0]=(v=v>>8) & (255);  
     this.index+=4;  
 }
-ByteBuffer.prototype.writeSingle = function(value){
-    bytes=new Array(3);
-    let v = value;
-    this.data[this.index+3]=(v) & (255);
-    this.data[this.index+2]=(v=v>>8) & (255);
-    this.data[this.index+1]=(v=v>>8) & (255);
-    this.data[this.index+0]=(v=v>>8) & (255);  
+ByteBuffer.prototype.writeFloat32 = function(value){
+    float = new Float32Array([value]);
+    bytes=new Uint8Array(float.buffer);
+    this.data[this.index+3]=bytes[3]; 
+    this.data[this.index+2]=bytes[2]; 
+    this.data[this.index+1]=bytes[1]; 
+    this.data[this.index+0]=bytes[0];  
     this.index+=4;  
 }
 ByteBuffer.prototype.writeString = function(value){
@@ -48,8 +48,9 @@ ByteBuffer.prototype.readUInt8 = function(){
 ByteBuffer.prototype.readInt32 = function(){
     return (this.data[this.index++]<<24 | this.data[this.index++]<<16 | this.data[this.index++]<<8 | this.data[this.index++]<<0)
 }
-ByteBuffer.prototype.readSingle = function(){
-    return (this.data[this.index++]<<24 | this.data[this.index++]<<16 | this.data[this.index++]<<8 | this.data[this.index++]<<0)
+ByteBuffer.prototype.readFloat32 = function(){
+    let float =  new Float32Array(new Uint8Array([this.data[this.index++],this.data[this.index++],this.data[this.index++],this.data[this.index++]]).buffer)[0];
+    return float;
 }
 ByteBuffer.prototype.readString = function(){
     let result = "";
@@ -60,20 +61,5 @@ ByteBuffer.prototype.readString = function(){
     return result;
 }
 
-/*
-You can do it with typed arrays:
-
-var buffer = new ArrayBuffer(4);
-var floatView = new Float32Array(buffer);
-
-floatView[0] = Math.PI
-console.log(intView[0].toString(2)); //bits of the 32 bit float
-Or another way:
-
-var view = new DataView(new ArrayBuffer(4));
-view.setFloat32(0, Math.PI);
-console.log(view.getInt32(0).toString(2)); //bits of the 32 bit float
-*/
-
-//let module = {};
+if (typeof module !== 'undefined')
 module.exports = ByteBuffer;

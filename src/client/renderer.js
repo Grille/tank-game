@@ -1,6 +1,6 @@
 
 
-
+/*
 Client.prototype.render = function(){
   let gl2d = this.gl2d;
 
@@ -64,3 +64,4 @@ Client.prototype.drawTank = function(posX, posY, mainRot, towerRot, color) {
   gl2d.matrix.reset();
   
 }
+*/

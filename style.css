@@ -2,7 +2,7 @@ canvas{
   left: 0; top: 0;
   border: none; 
   position: fixed; 
-  background-color: black;
+  background-color: gray;
 }
 #menu{
   position: fixed;

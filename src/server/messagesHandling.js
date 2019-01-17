@@ -1,0 +1,3 @@
+/*function message(message) {
+    switch
+}*/

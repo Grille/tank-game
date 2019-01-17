@@ -1,8 +1,10 @@
 
+/*
 let posX=200,posY=200;
 let rot =0;
 let tankRot = 0;
 let speed = 0.1;
+
 
 Client.prototype.logic = function(){
 
@@ -33,3 +35,4 @@ Client.prototype.logic = function(){
   let _this = this;
   setTimeout(()=>{_this.logic()}, 8);
 }
+*/
