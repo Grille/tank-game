@@ -1,7 +1,7 @@
 
 
-/*
-Client.prototype.render = function(){
+
+export function render(){
   let gl2d = this.gl2d;
 
   gl2d.startScene();
@@ -28,7 +28,7 @@ Client.prototype.render = function(){
   setTimeout(()=>{_this.render()}, 16);
 }
 
-Client.prototype.drawTank = function(posX, posY, mainRot, towerRot, color) {
+export function drawTank(posX, posY, mainRot, towerRot, color) {
   let gl2d = this.gl2d;
 
   gl2d.matrix.reset();
@@ -64,4 +64,4 @@ Client.prototype.drawTank = function(posX, posY, mainRot, towerRot, color) {
   gl2d.matrix.reset();
   
 }
-*/
+

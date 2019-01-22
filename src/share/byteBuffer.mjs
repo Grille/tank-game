@@ -1,4 +1,4 @@
-class ByteBuffer{
+export default class ByteBuffer{
     constructor(data){
         this.index = 0;
         this.data = [];
@@ -60,6 +60,3 @@ ByteBuffer.prototype.readString = function(){
     }
     return result;
 }
-
-if (typeof module !== 'undefined')
-module.exports = ByteBuffer;

@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Chrome against localhost",
       //"url": "http://localhost:8080",
-      "runtimeArgs": ["--allow-file-access-from-files"],
+      "runtimeArgs": ["--allow-file-access-from-files","--disable-web-security","--cors=*","--user-data-dir=${workspaceFolder}/chrome"],
       "file": "${workspaceFolder}/index.html"
     }
   ]

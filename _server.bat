@@ -1,0 +1,1 @@
+start cmd /k "echo node --experimental-modules index.mjs & cd src/server & node --experimental-modules index.mjs"

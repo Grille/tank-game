@@ -1,5 +1,10 @@
 class Map{
   constructor(){
+    this.entities = {
+      layer0:[],
+      layer1:[],
+      layer2:[]
+    }
     this.entities = []
   }
 }
