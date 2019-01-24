@@ -1,7 +1,7 @@
 "use strict";
 
-class WebGL2DContext {
-  constructor(canvas,size) {
+export class WebGL2DContext {
+  constructor(canvas, size) {
     this.canvas = canvas;
     this.gl = null;
     this.shaderProgram = null;
@@ -168,7 +168,7 @@ WebGL2DContext.prototype.textureFromFile = function (path) {
   texture.image = new Image();
   let _this = this;
 
-  texture.onload = ()=>{}
+  texture.onload = () => { }
   texture.image.onload = function () {
     let canvas = document.createElement("canvas");
     let context = canvas.getContext("2d");
@@ -190,8 +190,8 @@ WebGL2DContext.prototype.textureFromFile = function (path) {
     _this.textureCounter++
     texture.onload();
 
-    if (texture.width==0) 
-    console.error("can not load texture from "+location.pathname+" , "+path)
+    if (texture.width == 0)
+      console.error("can not load texture from " + location.pathname + " , " + path)
   }
   texture.image.src = path;
   return texture;
@@ -562,7 +562,7 @@ WebGL2DContext.prototype.renderScene = function () {
 }
 
 
-class Matrix {
+export class Matrix {
   constructor() {
     this.list = [];
   }
@@ -600,7 +600,7 @@ Matrix.prototype.apply = function (dst, width, height) {
           result[i + 1] *= list[im].sy;
           break;
         case 2:
-          let sin=list[im].rs,cos=list[im].rc,x = result[i],y=result[i + 1]
+          let sin = list[im].rs, cos = list[im].rc, x = result[i], y = result[i + 1]
           result[i] = x * cos - y * sin;
           result[i + 1] = x * sin + y * cos;
           break;

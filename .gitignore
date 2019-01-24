@@ -1,4 +1,5 @@
 .vs
+chrome/
 node_modules
 package-lock.json
 *.csproj.user

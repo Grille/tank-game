@@ -6,10 +6,34 @@ canvas{
 }
 #menu{
   position: fixed;
-  background-color: brown;
+  background-color: transparent;
 }
 #menu button{
   width: 150pt;
   background-color: maroon;
   color: gold;
+}
+
+#html_chat{
+  color: white;
+  position: absolute;
+  bottom: 25px;
+
+}
+#html_chatInput{
+  background-color:rgba(0, 0, 0, 1);
+  color: white;
+  position: absolute;
+  bottom: 0px;
+  height: 25px;
+  border: 0px;
+}
+#html_chatDiv{
+  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
+  position: fixed;
+  overflow: hidden;
+  height: 200px;
+  width: 200px;
+  bottom: 10px;
+  align-content: flex-end;
 }

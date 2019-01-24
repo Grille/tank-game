@@ -14,7 +14,7 @@
   id:0,Ok?
 - chat
   id:1,{str message}
-- send map
+- send update
   id:2,data
 - update map
   id:3,data
