@@ -18,7 +18,7 @@ export function render() {
 
   for (let i = 0;i<this.tank.length;i++){
     let tank = this.tank[i];
-  this.drawTank(tank.x+200,tank.y+200,tank.angle,tank.angle,[80, 70, 150, 255]);
+    this.drawTank(tank.x+200,tank.y+200,tank.angle,tank.angle,[80, 70, 150, 255]);
   }
 
   gl2d.endScene();

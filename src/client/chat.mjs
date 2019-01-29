@@ -1,4 +1,4 @@
-import ByteBuffer from '../share/byteBuffer.mjs';
+import ByteBuffer from '../lib/byteBuffer.mjs';
 
 export function printToChat(text) {
   html_chat.innerText += "\n" + text;

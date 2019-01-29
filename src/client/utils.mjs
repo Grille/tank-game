@@ -1,4 +1,4 @@
-import ByteBuffer from '../share/byteBuffer.mjs';
+import ByteBuffer from '../lib/byteBuffer.mjs';
 
 export function addEventsKeyMouse() {
   let onkey = (e, set) => {
@@ -37,8 +37,12 @@ export function connect(url) {
     console.log("open");
     let buffer = new ByteBuffer();
     buffer.writeUint8(0);
-    //buffer.writeUint8(42);
-    buffer.writeString("name");
+    //buffer.writeUint8(42)\\;
+    let nr = (Math.random()*100)|0
+    buffer.writeString("Name"+nr);
+    buffer.writeUint8(0);
+    buffer.writeUint8(0);
+    buffer.writeUint8(255);
     socket.send(buffer.getBuffer());
   }
   socket.onmessage = (e) => {
@@ -47,7 +51,6 @@ export function connect(url) {
     //console.log("net: "+id);
     switch (id) {
       case 0:
-      console.log(data);
       data.readUint8();
       this.localID = data.readUint8();
       this.printToChat("your id is "+this.localID);

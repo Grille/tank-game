@@ -12,11 +12,14 @@ export default class Server {
     this.httpServer;
     this.socketServer;
     this.connections = [];
+    this.players = [];
+    
     this.tank = [{ x: 0, y: 0, angle: 0, speed: 0 }]
     this.eventMap = [{
       key: { up: 0, down: 0, left: 0, right: 0 },
       mouse: { x: 0, y: 0 }
     }]
+    this.game;
 
     if (port != null)
       this.start(port);
@@ -38,7 +41,8 @@ Server.prototype.start = function (port) {
     console.log("someone connected");
     this.addConnection(socket);
   });
-  this.gameLoop();
+  this.startGame();
+  //this.gameLoop();
 }
 
 extend(Server, _gameLogic)
