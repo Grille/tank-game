@@ -2,7 +2,7 @@ export default class Player{
   constructor(name,color){
     this.name = name;
     this.team = null;
-    this.color = color;
+    this.color = color!=null?color:{r:255,g:255,b:255};
     this.vehicleID = null;
     this.socketID = null;
     this.eventMap = {

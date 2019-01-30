@@ -9,13 +9,8 @@ export function addConnection(socket) {
     if (this.connections[i] == null || this.connections[i] == void 0) {
       this.connections[i] = socket
       socket.id = i;
-      socket.name = "ID_" + i;
+      socket.player=null;
       console.log("open " + socket.id);
-      this.tank[i] = { x: 0, y: 0,angle:0,speed:0 };
-      this.eventMap[i] = {
-        key: { up: 0, down: 0, left: 0, right: 0 },
-        mouse: { x: 0, y: 0 }
-      };
       break;
     }
   }
@@ -37,11 +32,11 @@ export function addConnection(socket) {
 }
 
 
-export function sendData(data) {
+export function sendData(data,exception) {
   let buffer = data.getBuffer();
   for (let i = 0; i < this.connections.length; i++) {
     let socket = this.connections[i];
-    if (socket != null && socket != void 0 && socket.readyState==1) {
+    if (socket != null && socket != void 0 && socket.readyState==1 && exception != socket) {
       socket.send(buffer);
     }
   }
@@ -67,13 +62,13 @@ export function sendChatMessage(message) {
 export function messageHandler(socket, id, data) {
   switch (id) {
     case 0:
-    console.log("send 0");
+      console.log("send 0");
       let name = data.readString();
       let color = {r:data.readUint8(),g:data.readUint8(),b:data.readUint8()};
       let player = new Player(name,color);
       this.game.addPlayer(player);
       socket.player = player;
-      this.sendChatMessage(name + " join");
+      //this.sendChatMessage(name + " join");
 
       let vehicle = new Vehicle();
       this.game.addVehicle(vehicle);
@@ -81,10 +76,13 @@ export function messageHandler(socket, id, data) {
       vehicle.color = player.color;
       vehicle.owner = player;
 
+
+
       data = new ByteBuffer();
       data.writeUint8(0);
       data.writeUint8(1);
-      data.writeUint8(socket.id);
+      console.log(socket.id);
+      data.writeUint8(socket.player.id);
       socket.send(data.getBuffer());
 
       break;
@@ -97,6 +95,16 @@ export function messageHandler(socket, id, data) {
       socket.player.eventMap.key.down = data.readUint8();
       socket.player.eventMap.key.left = data.readUint8();
       socket.player.eventMap.key.right = data.readUint8();
+
+      data = new ByteBuffer();
+      data.writeUint8(12);
+      data.writeUint8(socket.player.id);
+      data.writeUint8(socket.player.eventMap.key.up);
+      data.writeUint8(socket.player.eventMap.key.down);
+      data.writeUint8(socket.player.eventMap.key.left);
+      data.writeUint8(socket.player.eventMap.key.right);
+      this.sendData(data);
+      //console.log(data.getBuffer());
       break;
   }
 }

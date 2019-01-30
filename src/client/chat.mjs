@@ -4,8 +4,8 @@ export function printToChat(text) {
   html_chat.innerText += "\n" + text;
 }
 export function initChat() {
-  html_chatInput.onchange = (e) => {
-    if (this.socket.readyState && html_chatInput.value != "") {
+  html_chatInput.onkeyup = (e) => {
+    if (this.socket.readyState==1 && html_chatInput.value != "" && e.keyCode == 13) {
       let buffer = new ByteBuffer()
       buffer.writeUint8(1);
       buffer.writeString(html_chatInput.value)

@@ -1,4 +1,5 @@
 import Client from './client.mjs'
+import Timer from '../share/timer.mjs'
 
 let client;
 let gl2d;
@@ -9,11 +10,7 @@ console.log("init main()");
 function main() {
   updateCanvas();
   window.addEventListener("resize", updateCanvas);
-  //gl2d = new WebGL2DContext(canvas);
-  //loadData();
-
   startLocalGame();
-  console.log("main()");
 }
 
 function updateCanvas() {
@@ -38,6 +35,7 @@ function startLocalGame() {
   client.setRenderTraget(canvas);
   loadData()
   client.start();
+  client.render();
 
 }
 

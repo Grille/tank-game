@@ -3,10 +3,7 @@ import Entity from './entity.mjs';
 export default class Vehicle extends Entity{
   constructor(){
     super();
-    this.x = 0;
-    this.y = 0;
     this.speed = 0;
-
     this.name = "";
     this.alive = true;
     this.color = {r:255,g:255,b:255};
