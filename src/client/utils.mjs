@@ -18,14 +18,14 @@ export function addEventsKeyMouse() {
     if (e.keyCode == 39 && this.eventMap.key.right != set) {
       this.eventMap.key.right = set; send = true;
     }
-    if (this.socket.readyState && send) this.sendControl();
+    if (this.socket.readyState==1 && send) this.sendControl();
   }
   window.onkeydown = (e) => { onkey(e, 1) }
   window.onkeyup = (e) => { onkey(e, 0) }
 }
 export function sendControl() {
   let buffer = new ByteBuffer()
-  buffer.writeUint8(2);
+  buffer.writeUint8(3);
   buffer.writeUint8(this.eventMap.key.up);
   buffer.writeUint8(this.eventMap.key.down);
   buffer.writeUint8(this.eventMap.key.left);
@@ -33,16 +33,16 @@ export function sendControl() {
   this.socket.send(buffer.getBuffer());
 }
 export function connect(url) {
-
+  if (this.socket.readyState == 1)this.socket.close();
   let socket = this.socket = new WebSocket(url);
   socket.binaryType = "arraybuffer";
   socket.onopen = (e) => {
     console.log("open");
     let buffer = new ByteBuffer();
-    buffer.writeUint8(0);
+    buffer.writeUint8(1);
     //buffer.writeUint8(42)\\;
     let nr = (Math.random()*5)|0
-    buffer.writeString("Name"+nr);
+    buffer.writeString(html_inputName.value);
     buffer.writeUint8(255*Math.random());
     buffer.writeUint8(255*Math.random());
     buffer.writeUint8(255*Math.random());
@@ -53,47 +53,35 @@ export function connect(url) {
     let id = data.readUint8();
     //console.log("net: "+id);
     switch (id) {
-      case 0:
-      data.readUint8();
-      this.localID = data.readUint8();
-      this.printToChat("your id is "+this.localID);
+      case 1:
+        let result = data.readUint8();
+        if (result) {
+          this.localID = data.readUint8();
+          this.printToChat("your id is " + this.localID);
+        }
+        else{
+          this.printToChat("login refused");
+        }
 
       break;
-      case 1:
+      case 2:
         let chattxt = data.readString();
         this.printToChat(chattxt);
         break;
-
-      case 10:
-        id = data.readUint8();
-        if (this.game.players[id] == null) this.game.players[id] = new Player();
-        this.game.players[id].name = data.readString();
-        this.game.players[id].color = {r:data.readUint8(),g:data.readUint8(),b:data.readUint8()};
-        this.game.players[id].team = data.readUint8();
-
-        let vehicleid = data.readUint8();
-        if (vehicleid!=0)this.game.players[id].vehicle = this.game.vehicles[vehicleid-1];
-        else this.game.players[id].vehicle = null;
-
-        //this.printToChat(this.game.players[id].name +" join");
+      case 10:case 11:case 12:case 13:
+        this.game.decode(id,data);
         break;
-        case 12:
-        id = data.readUint8();
-        if (this.game.players[id] == null) this.game.players[id] = new Player();
-        this.game.players[id].eventMap.key.up = data.readUint8();
-        this.game.players[id].eventMap.key.down = data.readUint8();
-        this.game.players[id].eventMap.key.left = data.readUint8();
-        this.game.players[id].eventMap.key.right = data.readUint8();
+      case 20:
+        this.game.decode(id,data);
         break;
-      case 15:
-        id = data.readUint8();
-        if (this.game.vehicles[id]==null)this.game.vehicles[id]=new Vehicle();
-        this.game.vehicles[id].location.x = data.readFloat32();
-        this.game.vehicles[id].location.y = data.readFloat32();
-        this.game.vehicles[id].velocity.x = data.readFloat32();
-        this.game.vehicles[id].velocity.y = data.readFloat32();
-        this.game.vehicles[id].angle = data.readFloat32();
-        this.game.vehicles[id].speed = data.readFloat32();
+        case 90:
+        this.game.decode(id, data);
+        break;
+        case 91:
+        this.game.decode(id, data);
+        break;
+      case 92:
+        this.game.decode(id, data);
         break;
     }
 

@@ -44,7 +44,7 @@ export function sendData(data,exception) {
 
 export function sendChatMessage(message) {
   let data = new ByteBuffer();
-  data.writeUint8(1);
+  data.writeUint8(2);
   data.writeString(message);
   this.sendData(data)
 }
@@ -61,50 +61,73 @@ export function sendChatMessage(message) {
 
 export function messageHandler(socket, id, data) {
   switch (id) {
-    case 0:
-      console.log("send 0");
+    case 1:
       let name = data.readString();
       let color = {r:data.readUint8(),g:data.readUint8(),b:data.readUint8()};
-      let player = new Player(name,color);
-      this.game.addPlayer(player);
+      let player = null;
+      for (let i = 0;i<this.game.players.length;i++){
+        if (this.game.players[i] != null && this.game.players[i].name == name){
+          player = this.game.players[i];
+          player.color = color;
+        }
+      }
+      if (player != null) {
+        for (let i = 0; i < this.connections.length; i++) {
+          if (this.connections[i] != null && this.connections[i].player == player) {
+            data = new ByteBuffer();
+            data.writeUint8(1);
+            data.writeUint8(0);
+            socket.send(data.getBuffer());
+            socket.player = null;
+            console.log("login refused <" + player.name + ">")
+            return;
+          }
+        }
+      }
+      else {
+        player = new Player(name, color);
+        this.game.addPlayer(player);
+      }
       socket.player = player;
-      //this.sendChatMessage(name + " join");
-
-      let vehicle = new Vehicle();
-      this.game.addVehicle(vehicle);
-      player.vehicle = vehicle;
-      vehicle.color = player.color;
-      vehicle.owner = player;
-
-
+      if (player.vehicle == null) {
+        let vehicle = new Vehicle();
+        this.game.addVehicle(vehicle);
+        player.vehicle = vehicle;
+        vehicle.owner = player;
+      }
+      player.vehicle.color = player.color;
 
       data = new ByteBuffer();
-      data.writeUint8(0);
       data.writeUint8(1);
-      console.log(socket.id);
+      data.writeUint8(1);
       data.writeUint8(socket.player.id);
       socket.send(data.getBuffer());
 
-      break;
-    case 1:
-      let message = socket.player.name + ": " + data.readString()
-      this.sendChatMessage(message);
+      data = new ByteBuffer();
+      data.writeUint8(90);
+      this.game.encodeList(90,data);
+      socket.send(data.getBuffer());
+      
+      this.game.syncObject(20,player.vehicle);
+      this.game.syncObject(10,player);
+
       break;
     case 2:
-      socket.player.eventMap.key.up = data.readUint8();
-      socket.player.eventMap.key.down = data.readUint8();
-      socket.player.eventMap.key.left = data.readUint8();
-      socket.player.eventMap.key.right = data.readUint8();
-
-      data = new ByteBuffer();
-      data.writeUint8(12);
-      data.writeUint8(socket.player.id);
-      data.writeUint8(socket.player.eventMap.key.up);
-      data.writeUint8(socket.player.eventMap.key.down);
-      data.writeUint8(socket.player.eventMap.key.left);
-      data.writeUint8(socket.player.eventMap.key.right);
-      this.sendData(data);
-      //console.log(data.getBuffer());
+      let message = "";
+      if (socket.player != null)
+        message = socket.player.name + ": " + data.readString()
+      else
+        message = "*guest: " + data.readString()
+      this.sendChatMessage(message);
+      break;
+    case 3:
+      if (socket.player != null) {
+        socket.player.eventMap.key.up = data.readUint8();
+        socket.player.eventMap.key.down = data.readUint8();
+        socket.player.eventMap.key.left = data.readUint8();
+        socket.player.eventMap.key.right = data.readUint8();
+        this.game.syncObject(12, socket.player);
+      }
       break;
   }
 }

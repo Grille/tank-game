@@ -7,6 +7,7 @@ export function setRenderTraget(canvas) {
 }
 
 export function render() {
+  let date = Date.now();
   const RED = [255, 0, 0, 255];
   const BLUE = [0, 0, 255, 255];
   let gl2d = this.gl2d;
@@ -16,8 +17,12 @@ export function render() {
   if (this.game.players[this.localID] != null) {
     let localVehicle = this.game.players[this.localID].vehicle;
     if (localVehicle != null) {
-      this.cam.x = localVehicle.location.x-canvas.width/2;
-      this.cam.y = localVehicle.location.y-canvas.height/2;
+      //this.cam.vx = localVehicle.velocity.x;
+      //this.cam.vy = localVehicle.velocity.y;
+      this.cam.x += this.cam.vx;
+      this.cam.y += this.cam.vy;
+      this.cam.x = (localVehicle.location.x-canvas.width/2);
+      this.cam.y = (localVehicle.location.y-canvas.height/2);
     }
   }
 
@@ -45,12 +50,12 @@ export function render() {
 
   
   */
- gl2d.endScene();
+  gl2d.endScene();
   gl2d.renderScene();
 
+  this.stats.renderTime=Date.now()-date;
   let _this = this;
-  setTimeout(() => { _this.render() }, 8);
-  
+  setTimeout(() => { _this.render() }, 16);
 }
 
 export function drawGround(){

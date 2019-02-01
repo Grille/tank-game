@@ -7,5 +7,5 @@ export function startGame(){
   this.game.isServer=true;
   this.game.server = this;
   this.game.gameLoop();
-  this.game.syncPlayer();
+  this.game.syncTimer();
 }

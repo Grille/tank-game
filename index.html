@@ -33,9 +33,12 @@
 <body unselectable="on" oncontextmenu="return false";>
     <canvas id="canvas"></canvas>
     <div id="menu">
-        <button id="html_btnSNG">Start Network Game</button><br>
-        <button id="html_btnSLG">Start Local Game</button><br>
-        <button id="html_btnJNG">Join Network Game</button><br>
+      <table>
+        <tr><th>Server</th><td><input id="html_inputServer" type="url" value='ws://localhost:51942/'></td></tr>
+        <tr><th>Name</th><td><input id="html_inputName" value='name'></td></tr>
+        <tr><th>Color</th><td><input id="html_inputColor" type="color" value='#ffffff'></td></tr>
+        <tr><th colspan="2"><button id="html_btnJG">Join Game</button></th></tr>
+      </table>
     </div>
     <div id="html_chatDiv">
         <div style="width:200px; overflow: hidden;" id="html_chat"></div>

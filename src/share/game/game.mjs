@@ -11,6 +11,7 @@ export default class Game{
     this.isServer=false;
     this.server=null;
     this.map=null;
+    this.debug = {};
     this.players = [];
     this.vehicles = [];
     this.effects = [];

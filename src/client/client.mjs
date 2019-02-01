@@ -11,8 +11,9 @@ export default class Client {
   constructor() {
     this.canvas;
     this.gl2d;
-    this.cam = { x: 0, y: 0, z: 0 }
+    this.cam = { x: 0, y: 0, vx:0,vy:0,z: 0 }
     this.assets=null;
+    this.stats = {renderTime:0}
     this.game=new Game();
     this.game.gameLoop();
     this.localID=0;

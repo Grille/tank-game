@@ -9,9 +9,10 @@ canvas{
   background-color: transparent;
 }
 #menu button{
-  width: 150pt;
-  background-color: maroon;
-  color: gold;
+  width: 100%
+}
+#menu input{
+  width: 100%
 }
 
 #html_chat{

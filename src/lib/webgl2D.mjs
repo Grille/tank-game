@@ -29,7 +29,15 @@ export class WebGL2DContext {
       return;
 
     this.gl = canvas.getContext("webgl2", { antialias: false, depth: false });
-    if (this.gl === void 0 || this.gl === null) this.gl = canvas.getContext("webgl", { antialias: false, depth: false });
+    if (this.gl === void 0 || this.gl === null) {
+      this.gl = canvas.getContext("webgl", { antialias: false, depth: false });
+      console.warn("Can not initialize WebGL2, try switching to WebGL")
+    }
+    if (this.gl === void 0 || this.gl === null) {
+      console.error("Can not initialize WebGL!");
+      return;
+    }
+
     let gl = this.gl;
     this.vertexPositionBuffer = this.gl.createBuffer();
     this.vertexColorBuffer = this.gl.createBuffer();
@@ -218,6 +226,7 @@ WebGL2DContext.prototype.textureFromPixelArray = function (dataArray, width, hei
   this.textureCounter++
   return texture;
 }
+/*
 WebGL2DContext.prototype.textureFromString = function (string, font, size) {
   let gl = this.gl;
   let texture
@@ -245,6 +254,7 @@ WebGL2DContext.prototype.textureFromString = function (string, font, size) {
 
   return texture;
 }
+*/
 WebGL2DContext.prototype.startScene = function () {
   this.gl.viewportWidth = this.canvas.width;
   this.gl.viewportHeight = this.canvas.height;
@@ -538,9 +548,9 @@ WebGL2DContext.prototype.endScene = function () {
 
   this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.vertexIndexBuffer);
   if (this.bufferCreatet === false) this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, this.vertexIndex, this.gl.DYNAMIC_DRAW);
-  else this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, this.vertexIndex, 0, this.IndexOffset);
+  else this.gl.bufferSubData(this.gl.ELEMENT_ARRAY_BUFFER, 0, this.vertexIndex, 0, this.IndexOffset*3);
 
-  this.bufferCreatet = false;
+  this.bufferCreatet = true;
 }
 WebGL2DContext.prototype.createBuffer = function (size) {
 

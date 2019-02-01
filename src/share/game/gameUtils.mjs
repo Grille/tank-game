@@ -1,6 +1,6 @@
 import ByteBuffer from '../../lib/byteBuffer.mjs'
 
-export function addPlayer(name,color){
+export function addPlayer(player){
   for (let i = 0; i < this.players.length + 1; i++) {
     if (this.players[i] == null || this.players[i] == void 0) {
       player.id = i;
@@ -11,7 +11,7 @@ export function addPlayer(name,color){
       player = this.players[i];
     }
   }
-  this.syncData(10,player);
+  if (this.isServer)this.syncObject(10, player);
   return player;
 }
 

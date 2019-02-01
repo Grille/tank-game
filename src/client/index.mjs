@@ -10,7 +10,14 @@ console.log("init main()");
 function main() {
   updateCanvas();
   window.addEventListener("resize", updateCanvas);
-  startLocalGame();
+  client = new Client();
+  client.setRenderTraget(canvas);
+  loadData()
+  html_btnJG.onclick = (e)=>{
+    client.connect(html_inputServer.value);
+    client.start();
+    client.render();
+  }
 }
 
 function updateCanvas() {
@@ -27,16 +34,6 @@ function loadData() {
     tank2: gl2d.textureFromFile("./assets/tankPlating.png"),
     tank3: gl2d.textureFromFile("./assets/tankTower.png")
   }
-}
-
-function startLocalGame() {
-  client = new Client();
-  client.connect('ws://localhost:51942/');
-  client.setRenderTraget(canvas);
-  loadData()
-  client.start();
-  client.render();
-
 }
 
 window.onload = main;
