@@ -16,7 +16,7 @@ export function addPlayer(player){
 }
 
 export function addVehicle(vehicle){
-  addEntity(this.vehicles,vehicle);
+  return addEntity(this.vehicles,vehicle);
 }
 
 export function addEntity(list,entity){

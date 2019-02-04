@@ -53,7 +53,20 @@ export function assembler(mode, id, data, object) {
       func(typ.Uint8, data, object.eventMap.key, 'left');
       func(typ.Uint8, data, object.eventMap.key, 'right');
       break;
-    case 13: break;
+    case 13:
+      func(typ.Float32, data, object.eventMap.mouse, 'angle');
+      func(typ.Uint8, data, object.eventMap.mouse, 'leftdown');
+      func(typ.Uint8, data, object.eventMap.mouse, 'rightdown');
+      let mouse = object.eventMap.mouse;
+      if (mouse.leftclick == 0 && mouse.leftdown == 1)
+        mouse.leftclick = 1;
+      if (mouse.leftclick == 2 && mouse.leftdown == 0)
+        mouse.leftclick = 0;
+      if (mouse.rightclick == 0 && mouse.rightdown == 1)
+        mouse.rightclick = 1;
+      if (mouse.rightclick == 2 && mouse.rightdown == 0)
+        mouse.rightclick = 0;
+      break;
     case 14: break;
     case 20:
       func(typ.Float32, data, object.location, 'x');
@@ -61,7 +74,10 @@ export function assembler(mode, id, data, object) {
       func(typ.Float32, data, object.velocity, 'x');
       func(typ.Float32, data, object.velocity, 'y');
       func(typ.Float32, data, object, 'angle');
-      func(typ.Float32, data, object, 'speed');
+      func(typ.Float32, data, object, 'gunAngle');
+      func(typ.Uint8, data, object.color, 'r');
+      func(typ.Uint8, data, object.color, 'g');
+      func(typ.Uint8, data, object.color, 'b');
       break;
   }
 }

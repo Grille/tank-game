@@ -3,7 +3,7 @@ import ByteBuffer from '../lib/byteBuffer.mjs';
 import Vehicle from '../share/vehicle.mjs';
 import Player from '../share/player.mjs';
 
-export function addEventsKeyMouse() {
+export function addEventsControls() {
   let onkey = (e, set) => {
     let send = false;
     if (e.keyCode == 38 && this.eventMap.key.up != set) {
@@ -18,75 +18,59 @@ export function addEventsKeyMouse() {
     if (e.keyCode == 39 && this.eventMap.key.right != set) {
       this.eventMap.key.right = set; send = true;
     }
-    if (this.socket.readyState==1 && send) this.sendControl();
+    if (this.socket.readyState==1 && send) this.sendKeyControls();
+  }
+  let onmouse = (e) => {
+    let send = false,set = 0;
+
+    let posX = e.clientX - this.canvas.width / 2, posY = e.clientY - this.canvas.height / 2;
+    let angle = (Math.atan2(posY, posX) * (180 / Math.PI));
+
+    if (angle < 90)angle+=90
+    else angle-=270;
+    if (angle < 0)angle+=360
+
+    if (this.eventMap.mouse.angle != angle) {
+      this.eventMap.mouse.angle = angle; send = true;
+    }
+
+    set = (e.buttons & 1) == 1
+    if (this.eventMap.mouse.leftdown != set) {
+      this.eventMap.mouse.leftdown = set; send = true;
+    }
+    set = (e.buttons & 2) == 2
+    if (this.eventMap.mouse.rightdown != set) {
+      this.eventMap.mouse.rightdown = set; send = true;
+    }
+    //if (angle > 270)angle+=90
+    //else angle-=90
+    //if (send)
+
+    /*
+    let send = false;
+
+    if (e.keyCode == 40 && this.eventMap.key.down != set) {
+      this.eventMap.key.down = set; send = true;
+    }
+    if (e.keyCode == 37 && this.eventMap.key.left != set) {
+      this.eventMap.key.left = set; send = true;
+    }
+    if (e.keyCode == 39 && this.eventMap.key.right != set) {
+      this.eventMap.key.right = set; send = true;
+    }
+    */
+    if (this.socket.readyState==1 && send) {
+      this.sendMouseControls();
+    }
+    
   }
   window.onkeydown = (e) => { onkey(e, 1) }
   window.onkeyup = (e) => { onkey(e, 0) }
-}
-export function sendControl() {
-  let buffer = new ByteBuffer()
-  buffer.writeUint8(3);
-  buffer.writeUint8(this.eventMap.key.up);
-  buffer.writeUint8(this.eventMap.key.down);
-  buffer.writeUint8(this.eventMap.key.left);
-  buffer.writeUint8(this.eventMap.key.right);
-  this.socket.send(buffer.getBuffer());
-}
-export function connect(url) {
-  if (this.socket.readyState == 1)this.socket.close();
-  let socket = this.socket = new WebSocket(url);
-  socket.binaryType = "arraybuffer";
-  socket.onopen = (e) => {
-    console.log("open");
-    let buffer = new ByteBuffer();
-    buffer.writeUint8(1);
-    //buffer.writeUint8(42)\\;
-    let nr = (Math.random()*5)|0
-    buffer.writeString(html_inputName.value);
-    buffer.writeUint8(255*Math.random());
-    buffer.writeUint8(255*Math.random());
-    buffer.writeUint8(255*Math.random());
-    socket.send(buffer.getBuffer());
-  }
-  socket.onmessage = (e) => {
-    let data = new ByteBuffer(e.data)
-    let id = data.readUint8();
-    //console.log("net: "+id);
-    switch (id) {
-      case 1:
-        let result = data.readUint8();
-        if (result) {
-          this.localID = data.readUint8();
-          this.printToChat("your id is " + this.localID);
-        }
-        else{
-          this.printToChat("login refused");
-        }
 
-      break;
-      case 2:
-        let chattxt = data.readString();
-        this.printToChat(chattxt);
-        break;
-      case 10:case 11:case 12:case 13:
-        this.game.decode(id,data);
-        break;
-      case 20:
-        this.game.decode(id,data);
-        break;
-        case 90:
-        this.game.decode(id, data);
-        break;
-        case 91:
-        this.game.decode(id, data);
-        break;
-      case 92:
-        this.game.decode(id, data);
-        break;
-    }
-
-  }
-
+  window.onmousemove = (e) => { this.mouseEvent = e; }
+  window.onmousedown = (e) => { this.mouseEvent = e; onmouse(e) }
+  window.onmouseup = (e) => { this.mouseEvent = e; onmouse(e) }
+  window.setInterval(()=>{ onmouse(this.mouseEvent) }, 100);
 }
 
 export function addEvents() {

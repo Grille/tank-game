@@ -1,15 +1,14 @@
 # client to server
-- 0 regist client (name)
-- 1 send chat (message)
-- 2 request map
+- 1 regist client (name)
+- 2 send chat (message)
 - 3 send command (control.keys)
+- 4 send command (control.mouse)
 
 
 # server to client
-- 0 client registered (ok?)
-- 1 print chat (message)
-- 2 send update (data)
-- 3 update map (data)
+- 1 client registered (ok ? id : -)
+- 2 print chat (message)
+- 3 clear ()
 
 # game sync
 - 10 set player (name,color,*11,*12,*13)

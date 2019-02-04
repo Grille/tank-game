@@ -10,11 +10,16 @@ export default class Game{
   constructor(){
     this.isServer=false;
     this.server=null;
-    this.map=null;
-    this.debug = {};
+    this.map={
+      ground:[],
+      obj:[]
+    };
+    this.effects = {
+      global:[],
+      local:[]
+    };
     this.players = [];
     this.vehicles = [];
-    this.effects = [];
     this.projectiles = [];
     this.timer=new Timer(()=>{this.gameLogic()},8);
   }

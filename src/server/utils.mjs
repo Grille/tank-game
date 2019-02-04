@@ -62,31 +62,42 @@ export function sendChatMessage(message) {
 export function messageHandler(socket, id, data) {
   switch (id) {
     case 1:
+
       let name = data.readString();
       let color = {r:data.readUint8(),g:data.readUint8(),b:data.readUint8()};
       let player = null;
-      for (let i = 0;i<this.game.players.length;i++){
-        if (this.game.players[i] != null && this.game.players[i].name == name){
-          player = this.game.players[i];
-          player.color = color;
-        }
-      }
-      if (player != null) {
-        for (let i = 0; i < this.connections.length; i++) {
-          if (this.connections[i] != null && this.connections[i].player == player) {
-            data = new ByteBuffer();
-            data.writeUint8(1);
-            data.writeUint8(0);
-            socket.send(data.getBuffer());
-            socket.player = null;
-            console.log("login refused <" + player.name + ">")
-            return;
+
+      data = new ByteBuffer();
+      data.writeUint8(3);
+      socket.send(data.getBuffer());
+      data = new ByteBuffer();
+      data.writeUint8(90);
+      this.game.encodeList(90,data);
+      socket.send(data.getBuffer());
+
+      for (let ip = 0;ip<this.game.players.length;ip++){
+        if (this.game.players[ip] != null && this.game.players[ip].name == name){
+          let allowed = true
+          for (let ic = 0; ic < this.connections.length; ic++) {
+            if (this.connections[ic] != null && this.connections[ic].player == this.game.players[ip]) {
+              data = new ByteBuffer();
+              data.writeUint8(1);
+              data.writeUint8(0);
+              socket.send(data.getBuffer());
+              socket.player = null;
+              console.log("relogin refused <" + name + ">")
+              return;
+            }
           }
+          player = this.game.players[ip];
+          player.color = color;
+          console.log("relogin accepted <" + player.name + ">")
         }
       }
-      else {
+      if (player == null) {
         player = new Player(name, color);
         this.game.addPlayer(player);
+        console.log("login accepted <" + player.name + ">")
       }
       socket.player = player;
       if (player.vehicle == null) {
@@ -101,11 +112,6 @@ export function messageHandler(socket, id, data) {
       data.writeUint8(1);
       data.writeUint8(1);
       data.writeUint8(socket.player.id);
-      socket.send(data.getBuffer());
-
-      data = new ByteBuffer();
-      data.writeUint8(90);
-      this.game.encodeList(90,data);
       socket.send(data.getBuffer());
       
       this.game.syncObject(20,player.vehicle);
@@ -127,6 +133,14 @@ export function messageHandler(socket, id, data) {
         socket.player.eventMap.key.left = data.readUint8();
         socket.player.eventMap.key.right = data.readUint8();
         this.game.syncObject(12, socket.player);
+      }
+      break;
+    case 4:
+      if (socket.player != null) {
+        socket.player.eventMap.mouse.angle = data.readFloat32();
+        socket.player.eventMap.mouse.leftdown = data.readUint8();
+        socket.player.eventMap.mouse.rightdown = data.readUint8();
+        this.game.syncObject(13, socket.player);
       }
       break;
   }

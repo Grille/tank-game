@@ -30,7 +30,13 @@ export function render() {
     let vehicle = this.game.vehicles[i];
     if (vehicle==null)continue;
     let color = [vehicle.color.r,vehicle.color.g,vehicle.color.b,255];
-    this.drawTank(vehicle.location.x,vehicle.location.y,vehicle.angle,vehicle.angle,color);
+    this.drawTank(vehicle.location.x,vehicle.location.y,vehicle.angle,vehicle.gunAngle,color);
+    //this.drawTankTurret(vehicle.location.x,vehicle.location.y,vehicle.gunAngle,color);
+  }
+  for (let i = 0;i<this.game.vehicles.length;i++){
+    let vehicle = this.game.vehicles[i];
+    if (vehicle==null)continue;
+    let color = [vehicle.color.r,vehicle.color.g,vehicle.color.b,255];this.drawTankTurret(vehicle.location.x,vehicle.location.y,vehicle.gunAngle,color);
   }
 /*
   this.cam.x = this.tank[this.localID].x;
@@ -85,9 +91,16 @@ export function drawTank(posX, posY, mainRot, towerRot, color) {
   gl2d.drawImage(assets.tank1, [0, 0, 24, 45], [0, 0, 24, 45], [255, 255, 255, 255]);
   gl2d.drawImage(assets.tank2, [0, 0, 24, 45], [0, 0, 24, 45], color);
   gl2d.matrix.reset();
+}
+
+export function drawTankTurret(posX, posY, angle, color) {
+  let gl2d = this.gl2d;
+  let assets = this.assets;
+  
+  gl2d.matrix.reset();
 
   gl2d.matrix.translate(-12, -22);
-  gl2d.matrix.rotate(towerRot);
+  gl2d.matrix.rotate(angle);
   gl2d.matrix.scale(2, 2)
   gl2d.matrix.translate(posX, posY);
   gl2d.matrix.translate(-this.cam.x, -this.cam.y);
