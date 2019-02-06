@@ -67,9 +67,9 @@ export function addEventsControls() {
   window.onkeydown = (e) => { onkey(e, 1) }
   window.onkeyup = (e) => { onkey(e, 0) }
 
-  window.onmousemove = (e) => { this.mouseEvent = e; }
-  window.onmousedown = (e) => { this.mouseEvent = e; onmouse(e) }
-  window.onmouseup = (e) => { this.mouseEvent = e; onmouse(e) }
+  canvas.onmousemove = (e) => { this.mouseEvent = e; }
+  canvas.onmousedown = (e) => { this.mouseEvent = e; onmouse(e) }
+  canvas.onmouseup = (e) => { this.mouseEvent = e; onmouse(e) }
   window.setInterval(()=>{ onmouse(this.mouseEvent) }, 100);
 }
 

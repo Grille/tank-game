@@ -79,7 +79,7 @@ export function messageHandler(socket, id, data) {
         if (this.game.players[ip] != null && this.game.players[ip].name == name){
           let allowed = true
           for (let ic = 0; ic < this.connections.length; ic++) {
-            if (this.connections[ic] != null && this.connections[ic].player == this.game.players[ip]) {
+            if (this.connections[ic] != socket && this.connections[ic] != null && this.connections[ic].player == this.game.players[ip]) {
               data = new ByteBuffer();
               data.writeUint8(1);
               data.writeUint8(0);
@@ -103,6 +103,8 @@ export function messageHandler(socket, id, data) {
       if (player.vehicle == null) {
         let vehicle = new Vehicle();
         this.game.addVehicle(vehicle);
+        vehicle.location = {x:Math.random()*200-100,y:Math.random()*200-100}
+        vehicle.angle = vehicle.gunAngle = Math.random()*360
         player.vehicle = vehicle;
         vehicle.owner = player;
       }

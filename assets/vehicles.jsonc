@@ -1,0 +1,10 @@
+{
+  "name": "tank",
+  "graphic": "1.0.0",
+  "dependencies": {
+    "ws": "^6.0.0"
+  },
+  "author": "grille",
+  "license": "MIT"
+
+}

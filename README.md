@@ -6,13 +6,13 @@ Drive a tank over a map and shoot at other players.
 
 ## ToDo
 - [x] basic structure
-- [ ] basic engine
-- [ ] graphics
-- [ ] renderer
-- [ ] movement
+- [x] basic engine
+- [x] graphics
+- [x] renderer
+- [x] movement
 - [ ] colision detection
 - [ ] damage system
-- [ ] network/local multiplayer
+- [x] network/local multiplayer
 - [ ] GUI design
 
 ## Possible additions

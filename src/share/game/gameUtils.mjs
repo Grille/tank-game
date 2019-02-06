@@ -16,9 +16,24 @@ export function addPlayer(player){
 }
 
 export function addVehicle(vehicle){
-  return addEntity(this.vehicles,vehicle);
+  return this.addEntity(this.vehicles,vehicle);
 }
 
+export function addProjectile(projectile){
+  return this.addEntity(this.projectiles,projectile);
+}
+
+export function spawnEffect(typ,location,velocity,livetime){
+
+  let effect = {typ,location,velocity,livetime};
+  if (this.isServer){
+    this.syncEffect(effect);
+  }
+  else{
+    effect.birth = Date.now();
+    this.addEntity(this.effects,effect)
+  }
+}
 export function addEntity(list,entity){
   for (let i = 0; i < list.length + 1; i++) {
     if (list[i] == null || list[i] == void 0) {

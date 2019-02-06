@@ -1,5 +1,6 @@
 import extend from '../../extend.mjs'
 
+import * as _gameCollision from './gameCollision.mjs';
 import * as _gameLogic from './gameLogic.mjs';
 import * as _gameSync from './gameSync.mjs';
 import * as _gameUtils from './gameUtils.mjs';
@@ -14,10 +15,7 @@ export default class Game{
       ground:[],
       obj:[]
     };
-    this.effects = {
-      global:[],
-      local:[]
-    };
+    this.effects = [];
     this.players = [];
     this.vehicles = [];
     this.projectiles = [];
@@ -25,6 +23,7 @@ export default class Game{
   }
 }
 
+extend(Game, _gameCollision)
 extend(Game, _gameLogic)
 extend(Game, _gameSync)
 extend(Game, _gameUtils)

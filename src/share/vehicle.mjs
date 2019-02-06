@@ -8,5 +8,7 @@ export default class Vehicle extends Entity{
     this.color = {r:255,g:255,b:255};
     this.gunAngle = 45;
     this.owner = null;
+    this.collision = [-12,20,12,20,12,-20,-12,-20];
+    this.bounding = 26;
   }
 }
