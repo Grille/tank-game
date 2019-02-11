@@ -4,9 +4,9 @@ import Player from '../player.mjs'
 import Vehicle from '../vehicle.mjs'
 import Entity from '../entity.mjs';
 
-export const TYP = { Uint8: 0, Int32: 1, Float32: 2, String: 3, ID8: 4 };
-export const MESSAGE = {Player:10,PlayerSelect:11,PlayerCKey:12,PlayerCMouse:13,PlayerDelete:14,Vehicle:20,Projectile:30,ProjectileDelete:31,Effect:32,Decal:33,All:90,AllPlayers:91,AllVehicles:92,AllProjectiles:93}
-export const READ = 1, WRITE = 0;
+import {TYP,MESSAGE} from '../enum.mjs'
+
+const READ = 1, WRITE = 0;
 
 function read(typ, data, ref, $) {
   switch (typ) {
@@ -68,6 +68,7 @@ export function assembler(mode, id, data, object) {
         mouse.rightclick = 1;
       if (mouse.rightclick == 2 && mouse.rightdown == 0)
         mouse.rightclick = 0;
+
       break;
     case MESSAGE.PlayerDelete: break;
     case MESSAGE.Vehicle:
@@ -87,11 +88,17 @@ export function assembler(mode, id, data, object) {
       func(TYP.Float32, data, object.velocity, 'x');
       func(TYP.Float32, data, object.velocity, 'y');
       break;
+    case MESSAGE.Object:
+      func(TYP.Uint8, data, object, 'typ');
+      func(TYP.Float32, data, object.location, 'x');
+      func(TYP.Float32, data, object.location, 'y');
+      func(TYP.Float32, data, object, 'angle');
+      break;
     case MESSAGE.ProjectileDelete: break;
   }
 }
 export function encodeObject(id, data, object) {
-  data.writeUint8(object.id)
+  data.writeUint16(object.id)
   this.assembler(WRITE, id, data, object);
 }
 export function encodeList(id, data) {
@@ -100,12 +107,13 @@ export function encodeList(id, data) {
       this.encodeList(MESSAGE.AllVehicles, data);
       this.encodeList(MESSAGE.AllPlayers, data);
       this.encodeList(MESSAGE.AllProjectiles, data);
+      this.encodeList(MESSAGE.AllObjects, data);
       break;
     case MESSAGE.AllPlayers:
       let pCount = 0;
       for (let i = 0; i < this.players.length; i++)
         if (this.players[i] != null) pCount += 1;
-      data.writeUint8(pCount);
+      data.writeUint16(pCount);
       for (let i = 0; i < this.players.length; i++)
         if (this.players[i] != null)
           this.encodeObject(MESSAGE.Player, data, this.players[i])
@@ -114,20 +122,30 @@ export function encodeList(id, data) {
       let vCount = 0;
       for (let i = 0; i < this.vehicles.length; i++)
         if (this.vehicles[i] != null) vCount += 1;
-      data.writeUint8(vCount);
+      data.writeUint16(vCount);
       for (let i = 0; i < this.vehicles.length; i++)
         if (this.vehicles[i] != null) {
           this.encodeObject(MESSAGE.Vehicle, data, this.vehicles[i])
         }
       break;
-      case MESSAGE.AllProjectiles:
+    case MESSAGE.AllProjectiles:
       let projCount = 0;
       for (let i = 0; i < this.projectiles.length; i++)
         if (this.projectiles[i] != null) projCount += 1;
-      data.writeUint8(projCount);
+      data.writeUint16(projCount);
       for (let i = 0; i < this.projectiles.length; i++)
         if (this.projectiles[i] != null) {
           this.encodeObject(MESSAGE.Projectile, data, this.projectiles[i])
+        }
+      break;
+    case MESSAGE.AllObjects:
+      let objCount = 0;
+      for (let i = 0; i < this.objects.length; i++)
+        if (this.objects[i] != null) objCount += 1;
+      data.writeUint16(objCount);
+      for (let i = 0; i < this.objects.length; i++)
+        if (this.objects[i] != null) {
+          this.encodeObject(MESSAGE.Object, data, this.objects[i])
         }
       break;
     default: console.error("invalid package id: " + id); break;
@@ -136,50 +154,62 @@ export function encodeList(id, data) {
 export function decode(id, data) {
   switch (id) {
     case 10: case 11: case 12: case 13: case 14:
-      let playerId = data.readUint8();
+      let playerId = data.readUint16();
       if (this.players[playerId] == null) this.players[playerId] = new Player();
       this.assembler(READ, id, data, this.players[playerId]);
       break;
     case 20: case 21: case 22: case 23: case 24:
-      let vehicleId = data.readUint8();
+      let vehicleId = data.readUint16();
       if (this.vehicles[vehicleId] == null) this.vehicles[vehicleId] = new Vehicle();
       this.assembler(READ, id, data, this.vehicles[vehicleId]);
       break;
     case 30:
-      let ProjectileId = data.readUint8();
+      let ProjectileId = data.readUint16();
       if (this.projectiles[ProjectileId] == null) this.projectiles[ProjectileId] = new Entity();
       this.assembler(READ, id, data, this.projectiles[ProjectileId]);
       break;
     case 31: {
-      let ProjectileId = data.readUint8();
+      let ProjectileId = data.readUint16();
       this.projectiles[ProjectileId] = null
     } break;
+    case MESSAGE.Object:
+      let ObjectId = data.readUint16();
+      if (this.objects[ObjectId] == null) this.objects[ObjectId] = new Entity();
+      this.assembler(READ, id, data, this.objects[ObjectId]);
+      break;
     case MESSAGE.Effect: {
       let typ = data.readUint8();
       let location = {x:data.readFloat32(),y:data.readFloat32()}
       let velocity = {x:data.readFloat32(),y:data.readFloat32()}
       let livetime = data.readInt32();
-      this.spawnEffect(typ,location,velocity,livetime);
+      let size = data.readFloat32();
+      this.spawnEffect(typ,location,velocity,livetime,size);
     } break;
     case MESSAGE.All:
       this.decode(MESSAGE.AllVehicles,data);
       this.decode(MESSAGE.AllPlayers,data);
       this.decode(MESSAGE.AllProjectiles,data);
+      this.decode(MESSAGE.AllObjects,data);
       break;
     case MESSAGE.AllPlayers:
-      let pCount = data.readUint8();
+      let pCount = data.readUint16();
       for (let i = 0; i < pCount; i++)
         this.decode(MESSAGE.Player, data);
       break;
     case MESSAGE.AllVehicles:
-      let vCount = data.readUint8();
+      let vCount = data.readUint16();
       for (let i = 0; i < vCount; i++)
         this.decode(MESSAGE.Vehicle, data);
       break;
     case MESSAGE.AllProjectiles:
-      let projCount = data.readUint8();
+      let projCount = data.readUint16();
       for (let i = 0; i < projCount; i++)
         this.decode(MESSAGE.Projectile, data);
+      break;
+      case MESSAGE.AllObjects:
+      let objCount = data.readUint16();
+      for (let i = 0; i < objCount; i++)
+        this.decode(MESSAGE.Object, data);
       break;
     default: console.error("invalid package id: " + id); break;
   }
@@ -206,6 +236,7 @@ export function syncEffect(object) {
   data.writeFloat32(object.velocity.x);
   data.writeFloat32(object.velocity.y);
   data.writeInt32(object.livetime);
+  data.writeFloat32(object.size);
   this.server.sendData(data);
 }
 

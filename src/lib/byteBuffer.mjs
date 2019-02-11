@@ -17,6 +17,10 @@ ByteBuffer.prototype.getBuffer = function () {
 ByteBuffer.prototype.writeUint8 = function (value) {
   this.data[this.index++] = value | 0
 }
+ByteBuffer.prototype.writeUint16 = function (value) {
+  this.data[this.index++] = (value/255) | 0
+  this.data[this.index++] = (value%255) | 0
+}
 ByteBuffer.prototype.writeInt32 = function (value) {
   let bytes = new Array(3);
   let v = value;
@@ -44,6 +48,9 @@ ByteBuffer.prototype.writeString = function (value) {
 
 ByteBuffer.prototype.readUint8 = function () {
   return this.data[this.index++] | 0
+}
+ByteBuffer.prototype.readUint16 = function () {
+  return (this.data[this.index++]*255+this.data[this.index++])
 }
 ByteBuffer.prototype.readInt32 = function () {
   return (this.data[this.index++] << 24 | this.data[this.index++] << 16 | this.data[this.index++] << 8 | this.data[this.index++] << 0)

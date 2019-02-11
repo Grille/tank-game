@@ -19,7 +19,7 @@ function main() {
   client.connect(addrss);
   client.start();
   client.render();
-
+  html_inputName.value = '#'+btoa((Math.random()*999)|0);
   html_btnJG.onclick = (e)=>{
     let color = html_inputColor.value.match(/[A-Za-z0-9]{2}/g);
     color = color.map(function (v) { return parseInt(v, 16) });
@@ -45,7 +45,8 @@ function loadData() {
     tank3: gl2d.textureFromFile("./assets/tankTower.png"),
     projectile: gl2d.textureFromFile("./assets/projectile.png"),
     fire: gl2d.textureFromFile("./assets/fire.png"),
-    dust: gl2d.textureFromFile("./assets/dust.png")
+    dust: gl2d.textureFromFile("./assets/dust.png"),
+    tree: gl2d.textureFromFile("./assets/tree.png")
   }
 }
 

@@ -15,6 +15,16 @@ export default class Game{
       ground:[],
       obj:[]
     };
+    this.stats = {
+      count:{
+        objects:0,
+        effects:0,
+        players:0,
+        vehicles:0,
+        projectiles:0
+      }
+    }
+    this.objects = [];
     this.effects = [];
     this.players = [];
     this.vehicles = [];

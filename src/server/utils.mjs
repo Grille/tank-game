@@ -92,12 +92,14 @@ export function messageHandler(socket, id, data) {
           player = this.game.players[ip];
           player.color = color;
           console.log("relogin accepted <" + player.name + ">")
+          this.sendChatMessage("<"+player.name+"> rejoined");
         }
       }
       if (player == null) {
         player = new Player(name, color);
         this.game.addPlayer(player);
         console.log("login accepted <" + player.name + ">")
+        this.sendChatMessage("<"+player.name+"> joined");
       }
       socket.player = player;
       if (player.vehicle == null) {

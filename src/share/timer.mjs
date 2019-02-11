@@ -10,9 +10,14 @@ export default class Timer{
 Timer.prototype.timer = function(){
   this.count += Date.now() - this.lastDate;
   this.lastDate = Date.now();
-  while (this.count >= this.interval){
+  let i = 0;
+  while (this.count >= this.interval && i<4){
     this.count -= this.interval;
     this.func();
+    i++;
+  }
+  while (this.count >= this.interval){
+    this.count -= this.interval;
   }
   if (this.running)
     setTimeout(()=>{this.timer()}, 10);

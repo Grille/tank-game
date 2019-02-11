@@ -73,6 +73,9 @@ export function messageHandler(e) {
       case 32:
       this.game.decode(id, data);
       break;
+    case 40:
+      this.game.decode(id, data);
+      break;
     case 90:
       this.game.decode(id, data);
       break;

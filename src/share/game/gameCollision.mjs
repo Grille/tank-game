@@ -76,11 +76,11 @@ export function transformPolygon(poly,angle,location){
 }
 
 export function entityColision(entity1, entity2) {
-  if (entity1==null||entity2==null) return false;
+
+  if (entity1 == null || entity2 == null) return false;
   let bounding = entity1.bounding + entity2.bounding;
-  let diffX = Math.abs(entity1.location.x - entity2.location.x);
-  let diffY = Math.abs(entity1.location.y - entity2.location.y);
-  let boundingCollide = (diffX <= bounding) && (diffY <= bounding);
+  let boundingCollide = (Math.abs(entity1.location.x - entity2.location.x) <= bounding) && (Math.abs(entity1.location.y - entity2.location.y) <= bounding);
+  //let boundingCollide = ((entity2.location.x - entity1.location.x) ** 2 + (entity1.location.y - entity2.location.y) ** 2) <= bounding ** 2
   if (boundingCollide) {
     let poly1 = this.transformPolygon(entity1.collision, entity1.angle, entity1.location);
     let poly2 = this.transformPolygon(entity2.collision, entity2.angle, entity2.location);

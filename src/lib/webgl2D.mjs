@@ -81,7 +81,8 @@ export class WebGL2DContext {
       uniform sampler2D uSampler;
 
       void main(void) {
-        gl_FragColor = vec4(texture2D(uSampler, vTextureCoord) * vColor);
+        vec4 texture = texture2D(uSampler, vTextureCoord);
+        gl_FragColor = vec4(vColor*texture);
       }
       `
       )
@@ -111,19 +112,24 @@ WebGL2DContext.prototype.compileShader = function (vertexShaderCode, fragmentSha
   this.gl.shaderSource(vertexShader, vertexShaderCode);
 
   this.gl.compileShader(vertexShader);
-
+  if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) 
+    console.error("Could not compile fragmentShader: "+gl.getShaderInfoLog(vertexShader));
+  
   this.gl.shaderSource(fragmentShader, fragmentShaderCode);
 
   this.gl.compileShader(fragmentShader);
+  if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) 
+    console.error("Could not compile fragmentShader: "+gl.getShaderInfoLog(fragmentShader));
+  
 
   let shaderProgram = this.gl.createProgram();
   this.gl.attachShader(shaderProgram, vertexShader);
   this.gl.attachShader(shaderProgram, fragmentShader);
   this.gl.linkProgram(shaderProgram);
 
-  if (!gl.getProgramParameter(shaderProgram, this.gl.LINK_STATUS)) {
-    alert("Could not initialise shaders");
-  }
+  if (!gl.getProgramParameter(shaderProgram, this.gl.LINK_STATUS)) 
+    console.error("Could not initialise shaders");
+  
 
   shaderProgram.vertexPositionAttribute = this.gl.getAttribLocation(shaderProgram, "aVertexPosition");
   this.gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);

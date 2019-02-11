@@ -23,9 +23,9 @@ export function addProjectile(projectile){
   return this.addEntity(this.projectiles,projectile);
 }
 
-export function spawnEffect(typ,location,velocity,livetime){
-
-  let effect = {typ,location,velocity,livetime};
+export function spawnEffect(typ,location,velocity,livetime,size){
+  if (size==null)size=1;
+  let effect = {typ,location,velocity,livetime,size};
   if (this.isServer){
     this.syncEffect(effect);
   }

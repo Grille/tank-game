@@ -10,6 +10,7 @@ import * as _render from './renderer.mjs';
 
 export default class Client {
   constructor() {
+    this.effecCount = 0;
     this.canvas;
     this.gl2d;
     this.cam = { x: 0, y: 0, scale:1.5,vx:0,vy:0,z: 0 }
@@ -30,6 +31,7 @@ export default class Client {
   }
 }
 Client.prototype.start = function () {
+  window.game = this.game;
   console.log("start");
   this.addEvents();
   this.initChat();
