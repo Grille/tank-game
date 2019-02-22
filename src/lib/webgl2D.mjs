@@ -46,7 +46,7 @@ export class WebGL2DContext {
 
 
     if (size === void 0)
-      size = 200000;
+      size = 400000;
 
     this.vertexPosition = new Float32Array(size * 2 * 2);
     this.vertexTextureCoord = new Float32Array(size * 2 * 2);

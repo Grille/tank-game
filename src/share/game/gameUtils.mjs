@@ -11,7 +11,6 @@ export function addPlayer(player){
       player = this.players[i];
     }
   }
-  if (this.isServer)this.syncObject(10, player);
   return player;
 }
 
@@ -39,6 +38,7 @@ export function addEntity(list,entity){
     if (list[i] == null || list[i] == void 0) {
       entity.id = i;
       list[i] = entity
+      list.count++;
       return i;
     }
   }

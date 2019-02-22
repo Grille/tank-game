@@ -1,7 +1,31 @@
+"use strict"
+
 import ByteBuffer from '../../lib/byteBuffer.mjs'
 import Vehicle from '../vehicle.mjs';
 import Entity from '../entity.mjs';
 
+export function count(){
+  this.stats.count.objects = 0;
+  for (let i = 0; i < this.objects.length; i++)
+    if (this.objects[i] != null)
+      this.stats.count.objects++;
+  this.stats.count.effects = 0;
+  for (let i = 0; i < this.effects.length; i++)
+    if (this.effects[i] != null)
+      this.stats.count.effects++;
+  this.stats.count.players = 0;
+  for (let i = 0; i < this.players.length; i++)
+    if (this.players[i] != null)
+      this.stats.count.players++;
+  this.stats.count.vehicles = 0;
+  for (let i = 0; i < this.vehicles.length; i++)
+    if (this.vehicles[i] != null)
+      this.stats.count.vehicles++;
+  this.stats.count.projectiles = 0;
+  for (let i = 0; i < this.projectiles.length; i++)
+    if (this.projectiles[i] != null)
+      this.stats.count.projectiles++;
+}
 export function gameLoop() {
   //console.log("LOOP");
   this.timer.start();
@@ -13,19 +37,24 @@ export function reset(){
   this.projectiles = [];
 }
 export function gameLogic() {
+  let date = Date.now();
   this.playerControl();
-  
+
+  this.stats.count.vehicles = 0;
   for (let i = 0; i < this.vehicles.length; i++) {
     let vehicle = this.vehicles[i];
     if (vehicle == null) continue;
+    this.stats.count.vehicles++;
     //console.log(vehicle.velocity.x);
     vehicle.location.x += vehicle.velocity.x; vehicle.location.y += vehicle.velocity.y;
     vehicle.velocity.x*=0.99;vehicle.velocity.y*=0.99;
   }
-
+  
+  this.stats.count.effects = 0;
   for (let i = 0; i < this.effects.length; i++) {
     let effect = this.effects[i];
     if (effect == null) continue;
+    this.stats.count.effects++;
     effect.location.x += effect.velocity.x; effect.location.y += effect.velocity.y;
     if (Date.now()>effect.birth + effect.livetime){
       this.effects[i] = null;
@@ -40,6 +69,7 @@ export function gameLogic() {
     //console.log(vehicle.velocity.x);
     projectile.location.x += projectile.velocity.x; projectile.location.y += projectile.velocity.y;
     projectile.velocity.x *= 0.994; projectile.velocity.y *= 0.994;
+
     if (this.isServer) {
       let speed = Math.sqrt(Math.pow(Math.abs(projectile.velocity.x), 2) + Math.pow(Math.abs(projectile.velocity.y), 2));
       if (speed < 2) {
@@ -60,6 +90,7 @@ export function gameLogic() {
       }
     }
   }
+  
   if (this.isServer) {
     for (let ip = 0; ip < this.projectiles.length; ip++) {
       let projectile = this.projectiles[ip];
@@ -67,29 +98,36 @@ export function gameLogic() {
       for (let iv = 0; iv < this.vehicles.length; iv++) {
         let vehicle = this.vehicles[iv];
         if (this.entityColision(vehicle, projectile)) {
-          vehicle.location.x += projectile.velocity.x;
-          vehicle.location.y += projectile.velocity.y;
+          vehicle.location.x += projectile.velocity.x/10;
+          vehicle.location.y += projectile.velocity.y/10;
           this.syncObject(31, projectile)
           this.syncObject(20, vehicle)
           this.spawnEffect(0, projectile.location, { x: 0, y: 0 }, 500);
           this.projectiles[ip] = null;
+          break;
         }
       }
+      
       for (let io = 0; io < this.objects.length; io++) {
   
         let object = this.objects[io];
         //continue;
         if (this.entityColision(object, projectile)) {
-          //object.location.x += projectile.velocity.x;
-          //object.location.y += projectile.velocity.y;
+          object.location.x += 999999+projectile.velocity.x/10;
+          object.location.y += 999999+projectile.velocity.y/10;
           this.syncObject(31, projectile)
-          //this.syncObject(40, object)
-          this.spawnEffect(0, projectile.location, { x: 0, y: 0 }, 5000,5);
+          this.syncObject(40, object)
+          this.spawnEffect(0, projectile.location, { x: 0, y: 0 }, 1000,3);
           this.projectiles[ip] = null;
+          break;
         }
       }
+      
     }
   }
+  
+  this.stats.simFrameTime = this.stats.simFrameTime*0.5+(Date.now()-date)*0.5;
+  //console.log(this.stats.simFrameTime);
 }
 
 export function playerControl(){
@@ -133,21 +171,19 @@ export function playerControl(){
         }
         //console.log("leftclick !!!!!!!!!!")
       }
-      if (eventMap.mouse.rightdown == 1){
+      if (eventMap.mouse.rightdown == 1) {
         if (this.isServer) {
-          for (let i = 0;i<20;i++){
-          let nprojectile = new Entity();
-          nprojectile.location.x = vehicle.location.x + (22 * Math.sin(vehicle.gunAngle / 180 * Math.PI));
-          nprojectile.location.y = vehicle.location.y - (22 * Math.cos((vehicle.gunAngle) / 180 * Math.PI));
-          nprojectile.velocity.x = +(4 * Math.sin(vehicle.gunAngle / 180 * Math.PI)) + vehicle.velocity.x + (Math.random() + -0.5)*2
-          nprojectile.velocity.y = -(4 * Math.cos((vehicle.gunAngle) / 180 * Math.PI)) + vehicle.velocity.y + (Math.random() + -0.5)*2
+          for (let i = 0; i < 1; i++) {
+            let nprojectile = new Entity();
+            nprojectile.location.x = vehicle.location.x + (22 * Math.sin(vehicle.gunAngle / 180 * Math.PI));
+            nprojectile.location.y = vehicle.location.y - (22 * Math.cos((vehicle.gunAngle) / 180 * Math.PI));
+            nprojectile.velocity.x = +(4 * Math.sin(vehicle.gunAngle / 180 * Math.PI)) + vehicle.velocity.x + (Math.random() - 0.5) * 4
+            nprojectile.velocity.y = -(4 * Math.cos((vehicle.gunAngle) / 180 * Math.PI)) + vehicle.velocity.y + (Math.random() - 0.5) * 4
 
-          this.spawnEffect(0, nprojectile.location, vehicle.velocity, 500);
-          this.addProjectile(nprojectile)
-          this.syncObject(30, nprojectile)
+            this.spawnEffect(0, nprojectile.location, vehicle.velocity, 500);
+            this.addProjectile( nprojectile)
+            this.syncObject(30, nprojectile)
           }
-
-
         }
       }
 
@@ -166,7 +202,7 @@ export function playerControl(){
         thrust = false;
       }
       if (thrust) {
-        speed += 0.01;
+        speed += 100000000000000;
 
       }
       if (!this.isServer && speed > 0.1 && Math.random() <= 0.1) 

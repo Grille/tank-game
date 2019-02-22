@@ -13,11 +13,10 @@ export default class Client {
     this.effecCount = 0;
     this.canvas;
     this.gl2d;
-    this.cam = { x: 0, y: 0, scale:1.5,vx:0,vy:0,z: 0 }
+    this.cam = { x: 0, y: 0, scale:0.8,vx:0,vy:0,z: 0 }
     this.assets=null;
     this.stats = {renderTime:0}
-    this.game=new Game();
-    this.game.gameLoop();
+    this.game;
     this.localID=0;
     this.keyDown = [];
     this.mouseEvent = new MouseEvent("");
@@ -31,6 +30,20 @@ export default class Client {
   }
 }
 Client.prototype.start = function () {
+  this.game=new Game();
+  this.game.gameLoop();
+  console.log("load: ")
+  this.game.assets.enableGraphics = true;
+  this.game.assets.gl2d = this.gl2d;
+  this.game.assets.loadFile = (path) => {
+    console.log("load: "+path)
+    let request = new XMLHttpRequest();
+    request.open("GET", path, false);
+    request.send();
+    return request.responseText;
+  };
+  this.game.assets.loadData("../../../assets/");
+
   window.game = this.game;
   console.log("start");
   this.addEvents();

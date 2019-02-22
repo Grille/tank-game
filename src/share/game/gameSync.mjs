@@ -4,7 +4,7 @@ import Player from '../player.mjs'
 import Vehicle from '../vehicle.mjs'
 import Entity from '../entity.mjs';
 
-import {TYP,MESSAGE} from '../enum.mjs'
+import {TYP,MESSAGE,OBJ} from '../enum.mjs'
 
 const READ = 1, WRITE = 0;
 
@@ -14,6 +14,7 @@ function read(typ, data, ref, $) {
     case TYP.Int32: ref[$] = data.readInt32(); break;
     case TYP.Float32: ref[$] = data.readFloat32(); break;
     case TYP.String: ref[$] = data.readString(); break;
+    case TYP.Bool: ref[$] = data.readUint8()===1; break;
   }
 }
 function write(typ, data, ref, $) {
@@ -22,6 +23,7 @@ function write(typ, data, ref, $) {
     case TYP.Int32: data.writeInt32(ref[$]); break;
     case TYP.Float32: data.writeFloat32(ref[$]); break;
     case TYP.String: data.writeString(ref[$]); break;
+    case TYP.Bool: data.writeUint8(ref[$]?1:0); break;
   }
 }
 export function readID(data, srcList, func) {
@@ -31,12 +33,14 @@ export function readID(data, srcList, func) {
   if (result != null && func != null) func(result);
   return result;
 }
+export function id(obj){}
 
 export function assembler(mode, id, data, object) {
   let func = mode ? read : write;
   switch (id) {
     case MESSAGE.Player:
-      func(TYP.String, data, object, 'name')
+      func(TYP.Bool, data, object, 'connected');
+      func(TYP.String, data, object, 'name');
       func(TYP.Uint8, data, object.color, 'r');
       func(TYP.Uint8, data, object.color, 'g');
       func(TYP.Uint8, data, object.color, 'b');
@@ -72,6 +76,7 @@ export function assembler(mode, id, data, object) {
       break;
     case MESSAGE.PlayerDelete: break;
     case MESSAGE.Vehicle:
+      func(TYP.Uint8, data, object, 'typ');
       func(TYP.Float32, data, object.location, 'x');
       func(TYP.Float32, data, object.location, 'y');
       func(TYP.Float32, data, object.velocity, 'x');
@@ -81,8 +86,12 @@ export function assembler(mode, id, data, object) {
       func(TYP.Uint8, data, object.color, 'r');
       func(TYP.Uint8, data, object.color, 'g');
       func(TYP.Uint8, data, object.color, 'b');
+      if (mode) object.owner = this.readID(data, this.players);
+      else data.writeUint8(object.owner == null ? 0 : object.owner.id + 1)
+
       break;
     case MESSAGE.Projectile:
+      func(TYP.Uint8, data, object, 'typ');
       func(TYP.Float32, data, object.location, 'x');
       func(TYP.Float32, data, object.location, 'y');
       func(TYP.Float32, data, object.velocity, 'x');
@@ -163,12 +172,12 @@ export function decode(id, data) {
       if (this.vehicles[vehicleId] == null) this.vehicles[vehicleId] = new Vehicle();
       this.assembler(READ, id, data, this.vehicles[vehicleId]);
       break;
-    case 30:
+    case MESSAGE.Projectile:
       let ProjectileId = data.readUint16();
       if (this.projectiles[ProjectileId] == null) this.projectiles[ProjectileId] = new Entity();
       this.assembler(READ, id, data, this.projectiles[ProjectileId]);
       break;
-    case 31: {
+    case MESSAGE.ProjectileDelete: {
       let ProjectileId = data.readUint16();
       this.projectiles[ProjectileId] = null
     } break;
@@ -243,7 +252,6 @@ export function syncEffect(object) {
 export function syncTimer() {
   if (this.isServer) {
     this.syncList(MESSAGE.AllVehicles);
-    let _this = this;
-    setTimeout(() => { _this.syncTimer() }, 250);
+    setTimeout(() => { this.syncTimer() }, 250);
   }
 }

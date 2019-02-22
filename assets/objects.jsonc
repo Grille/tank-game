@@ -1,0 +1,10 @@
+[
+  {
+    "name":"tree",
+    "graphicPath":"tree"
+  },
+  {
+    "name":"road",
+    "graphicPath":"road"
+  }
+]

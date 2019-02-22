@@ -27,40 +27,12 @@ export function render() {
       //this.cam.vy = localVehicle.velocity.y;
       //this.cam.x += this.cam.vx;
       //this.cam.y += this.cam.vy;
-      this.cam.x = this.cam.x*0.8+(localVehicle.location.x-canvas.width/(2*this.cam.scale))*0.2;
-      this.cam.y = this.cam.y*0.8+(localVehicle.location.y-canvas.height/(2*this.cam.scale))*0.2;
+      this.cam.x =this.cam.x*0.0 + (localVehicle.location.x-canvas.width/(2*this.cam.scale))*1;
+      this.cam.y = this.cam.y*0.0 +(localVehicle.location.y-canvas.height/(2*this.cam.scale))*1;
     }
   }
 
-  for (let i = 0; i < this.game.effects.length; i++) {
-    let effect = this.game.effects[i];
-    if (effect == null || effect.typ != 1) continue;
-    this.drawEffect(effect)
-  }
-  for (let i = 0; i < this.game.vehicles.length; i++) {
-    let vehicle = this.game.vehicles[i];
-    if (vehicle == null) continue;
-    let color = [vehicle.color.r, vehicle.color.g, vehicle.color.b, 255];
-    this.drawTank(vehicle.location, vehicle.angle, vehicle.gunAngle, color);
-  }
-  for (let i = 0; i < this.game.vehicles.length; i++) {
-    let vehicle = this.game.vehicles[i];
-    if (vehicle == null) continue;
-    let color = [vehicle.color.r, vehicle.color.g, vehicle.color.b, 255]; 
-    this.drawTankTurret(vehicle.location, vehicle.gunAngle, color);
-  }
-  for (let i = 0; i < this.game.projectiles.length; i++) {
-    let projectile = this.game.projectiles[i];
-    if (projectile == null) continue;
-    this.drawProjectile(projectile.location)
-  }
-
-  for (let i = 0; i < this.game.effects.length; i++) {
-    let effect = this.game.effects[i];
-    if (effect == null || effect.typ != 0) continue;
-    this.drawEffect(effect)
-  }
-
+  /*
   for (let i = 0; i < this.game.objects.length; i++) {
     let object = this.game.objects[i];
     if (object == null) continue;
@@ -74,6 +46,37 @@ export function render() {
      gl2d.matrix.reset();
     }
   }
+  */
+  for (let i = 0; i < this.game.effects.length; i++) {
+    let effect = this.game.effects[i];
+    if (effect == null || effect.typ != 1) continue;
+    this.drawEffect(effect)
+  }
+  for (let i = 0; i < this.game.vehicles.length; i++) {
+    let vehicle = this.game.vehicles[i];
+    if (vehicle == null) continue;
+    let color = [vehicle.color.r, vehicle.color.g, vehicle.color.b, 255];
+    if (vehicle.owner == null || vehicle.owner.connected === false) color[3]=128;
+    this.drawTank(vehicle.location, vehicle.angle, vehicle.gunAngle, color);
+  }
+  for (let i = 0; i < this.game.vehicles.length; i++) {
+    let vehicle = this.game.vehicles[i];
+    if (vehicle == null) continue;
+    let color = [vehicle.color.r, vehicle.color.g, vehicle.color.b, 255]; 
+    if (vehicle.owner == null || vehicle.owner.connected === false) color[3]=128;
+    this.drawTankTurret(vehicle.location, vehicle.gunAngle, color);
+  }
+  for (let i = 0; i < this.game.projectiles.length; i++) {
+    let projectile = this.game.projectiles[i];
+    if (projectile == null) continue;
+    this.drawProjectile(projectile.location)
+  }
+
+  for (let i = 0; i < this.game.effects.length; i++) {
+    let effect = this.game.effects[i];
+    if (effect == null || effect.typ != 0) continue;
+    this.drawEffect(effect)
+  }
   for (let i = 0; i < this.game.objects.length; i++) {
     let object = this.game.objects[i];
     if (object == null) continue;
@@ -83,7 +86,7 @@ export function render() {
 
       gl2d.matrix.reset();
       this.translate(object.location, [-32, -32], object.angle)
-      gl2d.drawImage(this.assets.tree, [0, 0, 64, 64], [0, 0, 64, 64], [255, 255, 255, 255]);
+      gl2d.drawImage(this.game.assets.objects[object.typ].graphic, [0, 0, 64, 64], [0, 0, 64, 64], [255, 255, 255, 255]);
       gl2d.matrix.reset();
       
      gl2d.matrix.reset();
@@ -111,6 +114,7 @@ export function render() {
   gl2d.renderScene();
 
   this.stats.renderTime=Date.now()-date;
+  //console.log(this.stats.renderTime);
   let _this = this;
   setTimeout(() => { _this.render() }, 10);
 }
@@ -168,8 +172,8 @@ export function drawTank(location, angle, towerRot, color) {
   gl2d.matrix.reset();
 
   this.translate(location, [-12, -22], angle)
-  gl2d.drawImage(assets.tank0, [0, 0, 24, 46], [0, 0, 24, 46], [255, 255, 255, 255]);
-  gl2d.drawImage(assets.tank1, [0, 0, 24, 46], [0, 0, 24, 46], [255, 255, 255, 255]);
+  gl2d.drawImage(assets.tank0, [0, 0, 24, 46], [0, 0, 24, 46], [255, 255, 255, color[3]]);
+  gl2d.drawImage(assets.tank1, [0, 0, 24, 46], [0, 0, 24, 46], [255, 255, 255, color[3]]);
   gl2d.drawImage(assets.tank2, [0, 0, 24, 46], [0, 0, 24, 46], color);
   gl2d.matrix.reset();
 }
