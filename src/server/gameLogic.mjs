@@ -18,9 +18,9 @@ export function startGame(){
   this.game.syncTimer();
 
 
-
+/*
   let roadLocation = { x: 0, y: 0 }, angle = 0;
-  for (let i = 0; i < 51200; i++) {
+  for (let i = 0; i < 16; i++) {
     //angle += 40*Math.random()-20;
     if (angle>360)angle-=360
     if (angle<0)angle+=360
@@ -30,16 +30,18 @@ export function startGame(){
       collision: [-4, 0, 0, 4, 4, 0, 0, -4],
       bounding: 8, id: i, typ: 1, location: { x: roadLocation.x, y: roadLocation.y}, angle: angle
     }
+    this.game.chunkifyObjects();
   }
 
-  /*
-  let size = 512;
-  for (let i = 128; i < 256; i++) {
+  */
+  let size = 16384;
+  for (let i = 0; i < 60000; i++) {
     this.game.objects[i] = {
       collision: [-4, 0, 0, 4, 4, 0, 0, -4],
       bounding: 8, id: i, typ: 0, location: { x: Math.random() * size - size/2, y: Math.random() * size - size/2 }, angle: Math.random() * 360
     }
   }
-  */
+  this.game.chunkifyObjects();
+  
 
 }

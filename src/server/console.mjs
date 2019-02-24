@@ -3,7 +3,7 @@ import { isNullOrUndefined } from 'util';
 
 export function consoleInit(){
   readline.emitKeypressEvents(process.stdin);
-  process.stdin.setRawMode(true);
+  //process.stdin.setRawMode(true);
   process.stdin.on('keypress', (str, key) => {
     if (key.ctrl && key.name === 'c') {
       process.exit();
@@ -11,7 +11,7 @@ export function consoleInit(){
       this.parseCommand(this.consoleInput);
       this.consoleInput="";
       this.consoleUpdate();
-    } else if (str!=undefined){
+    } else if (str!=undefined&&key.name!='enter'){
       this.consoleInput+=str;
       this.consoleUpdate();
     }
@@ -31,13 +31,34 @@ export function parseCommand(command){
       this.start(this.port);
       this.consoleLog("start()");
     }break;
+    case "show":{
+      let obj = this.game[cmd[1]]
+      if (obj != null)
+        console.log(obj);
+      else
+        this.consoleLog("invalid argument");
+    }break;
+    case "count":{
+      switch(cmd[1]){
+        case "players":console.log("players: "+this.game.players.length);break;
+        case "objects":console.log("objects: "+this.game.objects.length);break;
+        case "vehicles":console.log("vehicles: "+this.game.vehicles.length);break;
+        case "projectiles":console.log("projectiles: "+this.game.projectiles.length);break;
+        default: this.consoleLog("invalid argument");break;
+      }
+    }break;
+    case "list":{
+      console.log("players: "+this.game.players.length);
+      for (let i = 0;i<this.game.players.length;i++)
+        console.log(" "+this.game.players[i].id+ ") name:"+this.game.players[i].name);
+    }break;
     case "stop":{
       this.game.timer.stop();
       this.stop();
       this.consoleLog("stop()");
     }break;
     default:{
-      this.consoleLog("invalid command: "+command);
+      this.consoleLog("invalid command");
     }
   }
 }
@@ -51,11 +72,13 @@ export function timeToString(ms){
 }
 export function consoleLog(msg){
   this.logs[this.logs.length]={typ:0,msg:timeToString(Date.now()-this.startDate)+" : "+msg+'\n'};
+  console.log(msg);
   //this.consoleUpdate();
 }
 export function consoleUpdate(){
   let output = "";
-  output+='\x1B[2J\x1B[0f';
+  /*
+  //output+='\x1B[2J\x1B[0f';
   output+="< tank-game server >\n\n";
 
   this.game.count();
@@ -71,14 +94,15 @@ export function consoleUpdate(){
   output+=" C.projectiles : "+(this.game.stats.count.projectiles|0)+'\n';
   output+="\n";
   
-  output+='\x1B[0;40H';
+  //output+='\x1B[0;40H';
   output+="messages...\n";
   for (let i = 0;i<this.logs.length;i++){
     output+='\x1B['+(i+3)+';40H';
     output+=this.logs[i].msg;
   }
+  */
   //output+='\x1B['+(process.stdout.rows-2)+';0H------------------------------------------------------------------------------------------';
   //output+='\x1B['+process.stdout.rows+';0H------------------------------------------------------------------------------------------';
-  output+='\x1B['+(process.stdout.rows-1)+';0H'+this.consoleInput;
-  process.stdout.write(output);
+  //output+='\x1B['+(process.stdout.rows-1)+';0H'+this.consoleInput;
+  //process.stdout.write(output);
 }

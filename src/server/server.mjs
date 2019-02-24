@@ -22,7 +22,7 @@ export default class Server {
     if (port != null)
       this.start(port);
     this.consoleInit();
-    setInterval(() => { this.consoleUpdate() }, 1000);
+    //setInterval(() => { this.consoleUpdate() }, 1000);
   }
 }
 

@@ -162,12 +162,12 @@ export function encodeList(id, data) {
 }
 export function decode(id, data) {
   switch (id) {
-    case 10: case 11: case 12: case 13: case 14:
+    case MESSAGE.Player: case MESSAGE.PlayerSelect: case MESSAGE.PlayerCKey: case MESSAGE.PlayerCMouse: case MESSAGE.PlayerDelete:
       let playerId = data.readUint16();
       if (this.players[playerId] == null) this.players[playerId] = new Player();
       this.assembler(READ, id, data, this.players[playerId]);
       break;
-    case 20: case 21: case 22: case 23: case 24:
+    case MESSAGE.Vehicle:
       let vehicleId = data.readUint16();
       if (this.vehicles[vehicleId] == null) this.vehicles[vehicleId] = new Vehicle();
       this.assembler(READ, id, data, this.vehicles[vehicleId]);

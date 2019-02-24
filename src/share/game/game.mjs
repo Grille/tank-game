@@ -27,6 +27,7 @@ export default class Game{
         projectiles:0
       }
     }
+    this.chunks = [];
     this.objects = [];
     this.effects = [];
     this.players = [];

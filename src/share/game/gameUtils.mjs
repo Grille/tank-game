@@ -17,6 +17,27 @@ export function addPlayer(player){
 export function addVehicle(vehicle){
   return this.addEntity(this.vehicles,vehicle);
 }
+export function genChunkKey(location){
+  return ('x' + ((location.x / 256) | 0) + 'y' + ((location.y / 256) | 0)).replace('-','n',).replace('-','n',);
+}
+export function chunkifyObject(object) {
+  let key = genChunkKey(object.location);
+  if (this.chunks[key] === undefined) {
+    this.chunks[key] = {
+      objects: []
+    }
+  }
+  this.chunks[key].objects.push(object);
+}
+export function chunkifyObjects() {
+  for (let i = 0; i < this.objects.length; i++) {
+    let object = this.objects[i];
+    if (object !== null) {
+      this.chunkifyObject(object);
+    }
+  }
+}
+
 
 export function addProjectile(projectile){
   return this.addEntity(this.projectiles,projectile);

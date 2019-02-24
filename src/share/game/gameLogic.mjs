@@ -108,21 +108,23 @@ export function gameLogic() {
         }
       }
       
-      for (let io = 0; io < this.objects.length; io++) {
-  
-        let object = this.objects[io];
-        //continue;
-        if (this.entityColision(object, projectile)) {
-          object.location.x += 999999+projectile.velocity.x/10;
-          object.location.y += 999999+projectile.velocity.y/10;
-          this.syncObject(31, projectile)
-          this.syncObject(40, object)
-          this.spawnEffect(0, projectile.location, { x: 0, y: 0 }, 1000,3);
-          this.projectiles[ip] = null;
-          break;
+      let key = this.genChunkKey(projectile.location);
+      if (this.chunks[key] !== undefined) {
+        let objects = this.chunks[key].objects;
+        for (let io = 0; io < objects.length; io++) {
+          let object = objects[io];
+          //continue;
+          if (this.entityColision(object, projectile)) {
+            object.location.x += 999999 + projectile.velocity.x / 10;
+            object.location.y += 999999 + projectile.velocity.y / 10;
+            this.syncObject(31, projectile)
+            this.syncObject(40, object)
+            this.spawnEffect(0, projectile.location, { x: 0, y: 0 }, 1000, 3);
+            this.projectiles[ip] = null;
+            break;
+          }
         }
       }
-      
     }
   }
   
@@ -202,7 +204,7 @@ export function playerControl(){
         thrust = false;
       }
       if (thrust) {
-        speed += 100000000000000;
+        speed += 0.01;
 
       }
       if (!this.isServer && speed > 0.1 && Math.random() <= 0.1) 
