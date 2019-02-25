@@ -1,5 +1,6 @@
 import readline from 'readline';
 import { isNullOrUndefined } from 'util';
+import { count } from '../share/game/gameLogic.mjs';
 
 export function consoleInit(){
   readline.emitKeypressEvents(process.stdin);
@@ -22,43 +23,79 @@ export function parseCommand(command){
   switch (cmd[0]){
     case "restart":{
       this.startGame();
-      this.consoleLog("restart()");
+      console.log("restart()");
     }break;
     case "start":{
       this.game.timer.start();
       if (cmd[1] != null)
         this.port = Number.parseInt(cmd[1])
       this.start(this.port);
-      this.consoleLog("start()");
+      console.log("start()");
+    }break;
+    case "clear":{
+      console.log('\x1Bc');
+    }break;
+    case "eval":{
+      if (cmd[1] != null) {
+        try{
+          let date = Date.now();
+          eval(cmd[1]);
+          console.log("executed "+(Date.now()-date)+"ms");
+        }catch (e){
+          console.log(e.message);
+        }
+      }
+      else
+      console.log("invalid argument");
     }break;
     case "show":{
-      let obj = this.game[cmd[1]]
-      if (obj != null)
-        console.log(obj);
+      if (cmd[1] != null) {
+        try{
+          let date = Date.now();
+          eval("console.log(this."+cmd[1]+")");
+        }catch (e){
+          console.log(e.message);
+        }
+      }
       else
-        this.consoleLog("invalid argument");
+      console.log("invalid argument");
+    }break;
+    case "chat":{
+      if (cmd[1] != null)
+        this.sendChatMessage(cmd[1]);
+      else
+        console.log("invalid argument");
     }break;
     case "count":{
-      switch(cmd[1]){
-        case "players":console.log("players: "+this.game.players.length);break;
-        case "objects":console.log("objects: "+this.game.objects.length);break;
-        case "vehicles":console.log("vehicles: "+this.game.vehicles.length);break;
-        case "projectiles":console.log("projectiles: "+this.game.projectiles.length);break;
-        default: this.consoleLog("invalid argument");break;
+      let list = this.game[cmd[1]]
+      if (list != null) {
+        let count = 0;
+        for (let i = 0; i < list.length; i++)
+          if (list[i] != null)
+            count+=1;
+        console.log(count);
       }
+      else
+      console.log("invalid argument");
     }break;
     case "list":{
-      console.log("players: "+this.game.players.length);
-      for (let i = 0;i<this.game.players.length;i++)
-        console.log(" "+this.game.players[i].id+ ") name:"+this.game.players[i].name);
+      let list = this.game[cmd[1]]
+      if (list != null) {
+        console.log(cmd[1]+".length: " + list.length);
+        for (let i = 0; i < list.length; i++)
+          if (list[i] != null)
+            console.log(" " + list[i].id + ") ");
+      }
+      else
+      console.log("invalid argument");
     }break;
     case "stop":{
       this.game.timer.stop();
       this.stop();
-      this.consoleLog("stop()");
+      console.log("stop()");
     }break;
     default:{
-      this.consoleLog("invalid command");
+      console.log("invalid command");
     }
   }
 }
@@ -77,8 +114,8 @@ export function consoleLog(msg){
 }
 export function consoleUpdate(){
   let output = "";
-  /*
-  //output+='\x1B[2J\x1B[0f';
+  
+  //output+=;
   output+="< tank-game server >\n\n";
 
   this.game.count();
@@ -100,7 +137,7 @@ export function consoleUpdate(){
     output+='\x1B['+(i+3)+';40H';
     output+=this.logs[i].msg;
   }
-  */
+  
   //output+='\x1B['+(process.stdout.rows-2)+';0H------------------------------------------------------------------------------------------';
   //output+='\x1B['+process.stdout.rows+';0H------------------------------------------------------------------------------------------';
   //output+='\x1B['+(process.stdout.rows-1)+';0H'+this.consoleInput;

@@ -13,7 +13,7 @@ export default class Client {
     this.effecCount = 0;
     this.canvas;
     this.gl2d;
-    this.cam = { x: 0, y: 0, scale:0.8,vx:0,vy:0,z: 0 }
+    this.cam = { x: 0, y: 0, scale:1,vx:0,vy:0,z: 0 }
     this.assets=null;
     this.stats = {renderTime:0}
     this.game;

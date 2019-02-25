@@ -18,18 +18,23 @@ export function addVehicle(vehicle){
   return this.addEntity(this.vehicles,vehicle);
 }
 export function genChunkKey(location){
-  return ('x' + ((location.x / 256) | 0) + 'y' + ((location.y / 256) | 0)).replace('-','n',).replace('-','n',);
+  return ('x' + ((location.x / 128) | 0) + 'y' + ((location.y / 128) | 0)).replace('-','n',).replace('-','n',);
 }
 export function chunkifyObject(object) {
-  let key = genChunkKey(object.location);
-  if (this.chunks[key] === undefined) {
-    this.chunks[key] = {
-      objects: []
+  for (let ix = -1;ix<=1;ix++){
+    for (let iy = -1;iy<=1;iy++){
+      let key = genChunkKey({x:object.location.x+ix,y:object.location.y+iy});
+      if (this.chunks[key] === undefined) {
+        this.chunks[key] = {
+          objects: []
+        }
+      }
+      this.chunks[key].objects.push(object);
     }
   }
-  this.chunks[key].objects.push(object);
 }
 export function chunkifyObjects() {
+  this.chunks = {};
   for (let i = 0; i < this.objects.length; i++) {
     let object = this.objects[i];
     if (object !== null) {

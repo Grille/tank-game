@@ -34,8 +34,8 @@ export function startGame(){
   }
 
   */
-  let size = 16384;
-  for (let i = 0; i < 60000; i++) {
+  let size = 8000;
+  for (let i = 0; i < 50000; i++) {
     this.game.objects[i] = {
       collision: [-4, 0, 0, 4, 4, 0, 0, -4],
       bounding: 8, id: i, typ: 0, location: { x: Math.random() * size - size/2, y: Math.random() * size - size/2 }, angle: Math.random() * 360
