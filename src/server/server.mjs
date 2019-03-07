@@ -19,10 +19,11 @@ export default class Server {
     this.game;
     this.startDate = 0;
     this.consoleInput = "";
+    this.consoleMode = 0;
     if (port != null)
       this.start(port);
     this.consoleInit();
-    //setInterval(() => { this.consoleUpdate() }, 1000);
+    setInterval(() => { this.consoleUpdate() }, 100);
   }
 }
 

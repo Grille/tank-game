@@ -16,8 +16,6 @@ function getEdges(poly){
   edges[poly.length-2] = poly[poly.length-2]-poly[0];
   edges[poly.length-1] = poly[poly.length-1]-poly[1];
   return edges;
-
-
 }
 function projectPolygon(axis,poly){
   let min = (axis[0] * poly[0] + axis[1] * poly[1])

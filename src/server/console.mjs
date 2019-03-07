@@ -9,6 +9,10 @@ export function consoleInit(){
     if (key.ctrl && key.name === 'c') {
       process.exit();
     } else if (key.name === 'return'){
+      if (this.consoleMode!==0){
+        this.consoleMode = 0;
+        console.log('\x1Bc');
+      }
       this.parseCommand(this.consoleInput);
       this.consoleInput="";
       this.consoleUpdate();
@@ -32,6 +36,22 @@ export function parseCommand(command){
       this.start(this.port);
       console.log("start()");
     }break;
+    case "mode":{
+      if (cmd[1] != null) {
+        try{
+          let mode = Number.parseInt(cmd[1]);
+          if (this.consoleMode !== mode) {
+            this.consoleMode = mode;
+            console.log('\x1Bc');
+            console.log(this.consoleMode);
+          }
+        }catch (e){
+          console.log(e.message);
+        }
+      }
+      else
+      console.log("invalid argument");
+    }break;
     case "clear":{
       console.log('\x1Bc');
     }break;
@@ -39,7 +59,8 @@ export function parseCommand(command){
       if (cmd[1] != null) {
         try{
           let date = Date.now();
-          eval(cmd[1]);
+          let code = eval("(game,server)=>{"+cmd[1]+";}");
+          code(this.game,this);
           console.log("executed "+(Date.now()-date)+"ms");
         }catch (e){
           console.log(e.message);
@@ -51,8 +72,8 @@ export function parseCommand(command){
     case "show":{
       if (cmd[1] != null) {
         try{
-          let date = Date.now();
-          eval("console.log(this."+cmd[1]+")");
+          let code = eval("(game,server)=>{console.log("+cmd[1]+")}");
+          code(this.game,this);
         }catch (e){
           console.log(e.message);
         }
@@ -113,33 +134,37 @@ export function consoleLog(msg){
   //this.consoleUpdate();
 }
 export function consoleUpdate(){
-  let output = "";
-  
-  //output+=;
-  output+="< tank-game server >\n\n";
+  switch (this.consoleMode) {
+    case 1:
+      let output = "";
 
-  this.game.count();
-  output+="stats:\n";
-  output+=" running since : "+timeToString(Date.now()-this.startDate)+'\n';
-  output+=" SFT           : "+(this.game.stats.simFrameTime|0)+'ms\n';
-  output+=" T.resets      : "+(this.game.timer.stats.resets|0)+'\n';
-  output+=" T.deficit     : "+(this.game.timer.count|0)+'ms\n';
-  output+=" T.ticks       : "+(this.game.timer.stats.ticks|0)+'\n';
-  output+=" C.objects     : "+(this.game.stats.count.objects|0)+'\n';
-  output+=" C.players     : "+(this.game.stats.count.players|0)+'\n';
-  output+=" C.vehicles    : "+(this.game.stats.count.vehicles|0)+'\n';
-  output+=" C.projectiles : "+(this.game.stats.count.projectiles|0)+'\n';
-  output+="\n";
-  
-  //output+='\x1B[0;40H';
-  output+="messages...\n";
-  for (let i = 0;i<this.logs.length;i++){
-    output+='\x1B['+(i+3)+';40H';
-    output+=this.logs[i].msg;
+      output += '\x1Bc';
+      output += "< tank-game server >\n\n";
+
+      this.game.count();
+      output += "stats:\n";
+      output += " running since : " + timeToString(Date.now() - this.startDate) + '\n';
+      output += " SFT           : " + (this.game.stats.simFrameTime | 0) + 'ms\n';
+      output += " T.resets      : " + (this.game.timer.stats.resets | 0) + '\n';
+      output += " T.deficit     : " + (this.game.timer.count | 0) + 'ms\n';
+      output += " T.ticks       : " + (this.game.timer.stats.ticks | 0) + '\n';
+      output += " C.objects     : " + (this.game.stats.count.objects | 0) + '\n';
+      output += " C.players     : " + (this.game.stats.count.players | 0) + '\n';
+      output += " C.vehicles    : " + (this.game.stats.count.vehicles | 0) + '\n';
+      output += " C.projectiles : " + (this.game.stats.count.projectiles | 0) + '\n';
+      output += "\n";
+
+      output += '\x1B[0;40H';
+      output += "messages...\n";
+      for (let i = 0; i < this.logs.length; i++) {
+        output += '\x1B[' + (i + 3) + ';40H';
+        output += this.logs[i].msg;
+      }
+
+      //output+='\x1B['+(process.stdout.rows-2)+';0H------------------------------------------------------------------------------------------';
+      //output+='\x1B['+process.stdout.rows+';0H------------------------------------------------------------------------------------------';
+      //output+='\x1B['+(process.stdout.rows-1)+';0H'+this.consoleInput;
+      process.stdout.write(output);
+      break;
   }
-  
-  //output+='\x1B['+(process.stdout.rows-2)+';0H------------------------------------------------------------------------------------------';
-  //output+='\x1B['+process.stdout.rows+';0H------------------------------------------------------------------------------------------';
-  //output+='\x1B['+(process.stdout.rows-1)+';0H'+this.consoleInput;
-  //process.stdout.write(output);
 }

@@ -129,7 +129,6 @@ export function gameLogic() {
   }
   
   this.stats.simFrameTime = this.stats.simFrameTime*0.5+(Date.now()-date)*0.5;
-  //console.log(this.stats.simFrameTime);
 }
 
 export function playerControl(){
